@@ -1,0 +1,11 @@
+{% extends 'projects/base.html' %}
+
+{% block content %}
+  <h2>Supprimer un fichier de tâche</h2>
+  <p>Voulez-vous vraiment supprimer le fichier "{{ task_file }}" ? Cette action est irréversible.</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+    <a href="{% url 'task_detail' task_file.task.id %}" class="btn btn-secondary">Annuler</a>
+  </form>
+{% endblock %}

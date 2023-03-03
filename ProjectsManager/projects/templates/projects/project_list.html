@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Liste des projets</h2>
+<p><a href="{% url 'project_create' %}">Créer un projet</a></p>
+<table>
+  <thead>
+  <tr>
+    <th>Nom</th>
+    <th>Description</th>
+    <th>Dedline</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for project in projects %}
+  <tr>
+    <td>{{ project.name }}</td>
+    <td>{{ project.description }}</td>
+    <td>{{ project.deadline }}</td>
+    <td>
+      <a href="{% url 'project_detail' project.pk %}">Voir</a>
+      {% if project.manager == user %}
+      | <a href="{% url 'project_update' project.pk %}">Modifier</a>
+      | <a href="{% url 'project_delete' project.pk %}">Supprimer</a>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

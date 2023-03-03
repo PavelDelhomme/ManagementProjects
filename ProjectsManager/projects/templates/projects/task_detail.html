@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>{{ task.name }}</h2>
+    <p>{{ task.description }}</p>
+    <p>Deadline : {{ task.deadline }}</p>
+    <p>Créé le {{ task.created_at|date:'d/m/Y H:i:s' }}</p>
+    <p>Dernière modification le {{ task.updated_at|date:'d/m/Y H:i:s'}}</p>
+    <p><a href="{% url 'project_detail' project.pk %}">Retour au projet</a></p>
+{% endblock %}
