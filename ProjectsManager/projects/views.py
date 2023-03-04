@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Project, Tasks, ProjectFile, TaskFile
-from .forms import ProjectForm, TaskForm, ProjectFileForm, TaskFileForm
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
-from .models import Project, Task
+from .models import Project, ProjectFile, TaskFile, Task
+from .forms import ProjectForm, ProjectFileForm, TaskForm, TaskFileForm
+
 
 User = get_user_model()
 
@@ -16,7 +16,7 @@ User = get_user_model()
 @method_decorator(login_required, name='dispatch')
 class ProjectListView(ListView):
     model = Project
-    template_name = 'projects/project_list.html'
+    template_name = 'projects/projects_list.html'
     context_object_name = 'projects'
 
     def get_queryset(self):
