@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>{{ object.name }}</h1>
+        <p>{{ object.description }}</p>
+        <p>Assignée à : {{ object.assigned_to }}</p>
+        <p>Priorité : {{ object.priority }}</p>
+        <p>État : {{ object.status }}</p>
+        <p>Date de début : {{ object.start_date }}</p>
+        <p>Date de fin : {{ object.end_date }}</p>
+        <hr>
+        <h2>Commentaires</h2>
+        {% if object.comments %}
+          <p>{{ object.comments }}</p>
+        {% else %}
+          <p>Aucun commentaire pour cette tâche.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

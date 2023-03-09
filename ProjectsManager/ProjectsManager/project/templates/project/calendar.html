@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% load bootstrap_calendar %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      {% bootstrap_calendar calendar events startfield='start_date' endfield='end_date' %}
+      <div id="calendar"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}

@@ -10,4 +10,16 @@
     <orderEntry type="library" name="jquery-3.5.1.slim" level="application" />
     <orderEntry type="library" name="jquery-3.4.1.slim" level="application" />
   </component>
+  <component name="TemplatesService">
+    <option name="TEMPLATE_FOLDERS">
+      <list>
+        <option value="$MODULE_DIR$/ProjectsManager/core/projects/templates" />
+        <option value="$MODULE_DIR$/ProjectsManager/core/register/templates" />
+        <option value="$MODULE_DIR$/ProjectsManager/core/tasks/templates" />
+        <option value="$MODULE_DIR$/ProjectsManager/core/manager/templates" />
+        <option value="$MODULE_DIR$/ProjectsManager/core/projects/templates" />
+        <option value="$MODULE_DIR$/ProjectsManager/core/users/templates" />
+      </list>
+    </option>
+  </component>
 </module>
