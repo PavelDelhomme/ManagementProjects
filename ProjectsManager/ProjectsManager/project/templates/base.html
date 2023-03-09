@@ -2,62 +2,269 @@
 
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
+<head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - Project Manager</title>
-    <link rel="stylesheet" href="{% static 'fullcalendar/main.css' %}">
-  </head>
-  <body>
-    {% if user.is_authenticated %}
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Tableau de bord</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'all_notifications' %}">Notifications ({{ request.user.notifications.unread.count }})</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Déconnexion</a></li>
-        </ul>
-      </nav>
-    {% else %}
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Connexion</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">Inscription</a></li>
-        </ul>
-      </nav>
-    {% endif %}
-    <div class="container-fluid">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale/fr.js"></script>
+
+</head>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+    }
+
+    .header {
+        background-color: #f1f1f1;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .column {
+        flex: 1;
+        padding: 5px;
+    }
+
+    .card {
+        background-color: #ddd;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .card-project {
+        background-color: #7cb342;
+    }
+
+    .card-task {
+        background-color: #ffb900;
+    }
+
+    h3 {
+        margin: 0;
+    }
+
+    /* Style pour le texte "Aucun projet pour le moment" */
+    .my-5 p {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    /* Style pour le bouton "Créer un projet" */
+    .my-5 .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 4px;
+        color: #fff;
+        text-decoration: none;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .my-5 .btn-primary:hover {
+        background-color: #0062cc;
+        border-color: #005cbf;
+    }
+
+    .custom-button-container {
+        text-align: center;
+        margin-top: 20px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.5s;
+        z-index: 1;
+    }
+
+    .btn-primary:before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        opacity: 0;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+        transition: all 0.5s;
+    }
+
+    .btn-primary:hover:before {
+        width: 300%;
+        height: 300%;
+        opacity: 1;
+    }
+
+    .custom-button-container a {
+        display: inline-block;
+        font-size: 18px;
+        font-weight: bold;
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 12px 20px;
+        border-radius: 4px;
+        color: #fff;
+        text-decoration: none;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .btn-animated {
+        position: relative;
+        animation: moveInBottom 0.5s ease-out 0.75s forwards;
+    }
+
+
+    @keyframes moveInBottom {
+        0% {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+
+    .username {
+        font-weight: bold;
+        font-style: italic;
+    }
+
+    .navbar {
+        list-style: none;
+        background-color: #fff;
+        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-item {
+        display: inline-block;
+        align-items: center;
+        list-style: none;
+        margin-right: 10px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .nav-item:hover {
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-item a {
+        text-decoration: none;
+        color: #000;
+    }
+
+    .username {
+        font-weight: bold;
+        font-style: italic;
+    }
+
+    .navbar {
+        list-style: none;
+        background-color: #fff;
+        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-item {
+        display: inline-block;
+        align-items: center;
+        list-style: none;
+        margin-right: 10px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .nav-item:hover {
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+    }
+
+</style>
+<body>
+{% if user.is_authenticated %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Tableau de bord</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'project_list' %}">Projets</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'task_list' %}">Tâches</a></li>
+
+        <li class="nav-item {% if request.path == '/calendar/' %}active{%endif%}">
+            <a class="nav-link" href="{% url 'calendar' %}">
+                <i class="fa fa-calendar-alt">Calendrier</i>
+            </a>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'all_notifications' %}">Notifications ({{
+            request.user.notifications.unread.count }})</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Déconnexion</a></li>
+        <li class="nav-item"><a class="nav-link username" href="#">{{ user.username }}</a></li>
+    </ul>
+</nav>
+{% else %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Connexion</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">Inscription</a></li>
+    </ul>
+</nav>
+{% endif %}
+<div class="container-fluid">
     {% block content %}
     {% endblock %}
-    </div>
-    <script src="{% static 'fullcalendar-4.4.2/main.js' %}"></script>
-    <script src="{% static 'fullcalendar-4.4.2/locales/fr.js' %}"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
+    <div id="calendar"></div>
+</div>
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('#calendar').fullCalendar({
+            events: '/calendar_view/',
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            eventRender: function (event, element) {
+                element.addClass('fc-' + event.type);
+            }
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'dayGridMonth',
-          events: [
-            {% for project in projects %}
-              {
-                  title: "{{ project.name }}",
-                  start: "{{ project.start_date }}",
-                  end: "{{ project.end_date }}",
-                  url: "{% url 'project_detail' project.pk %}"
-              },
-            {% endfor %}
-            {% for task in tasks %}
-              {
-                  title: "{{ task.name }}",
-                  start:"{{ task.start_date }}",
-                  end:"{{ task.end_date }}",
-                  url:"{% url 'task_detail' task.pk %}"
-              },
-        {% endfor %}
-      ]
-      });
+            initialView: 'dayGridMonth',
+            events: '{% url "event_api" %}',
+        });
         calendar.render();
-      });
-    </script>
-    {% block scripts %}
-    {% endblock %}
-  </body>
+    });
+</script>
+{% endblock %}
+</body>
 </html>

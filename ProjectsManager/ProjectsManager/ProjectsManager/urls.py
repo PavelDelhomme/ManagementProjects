@@ -15,11 +15,30 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
+from project.views import HomePageView, SignUpView
+
+from django.contrib.auth.views import LoginView
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
 
 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', HomePageView.as_view(), name='home'),
+    path('login/',  auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='logout.html', next_page="login"), name='logout'),
     path('', include('project.urls')),
+    path('', include('users.urls')),
+
+    # Autres vues
+    path('login/',  auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='logout.html', next_page="login"), name='logout'),
+    path('', include('project.urls')),
+    path('signup/', SignUpView.as_view(), name='signup'),
+    path('users/', include('users.urls')),
+
+    path('', HomePageView.as_view(), name='dashboard'),
 ]

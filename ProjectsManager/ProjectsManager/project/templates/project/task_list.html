@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .badge {
+        display: inline-block;
+        padding: 0.25em 0.4em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.25rem;
+    }
+
+    .bg-info {
+        background-color: #d1ecf1;
+    }
+
+    .bg-warning {
+        background-color: #fff3cd;
+    }
+
+    .text-dark {
+        color: #343a40;
+    }
+
+    .bg-danger {
+        background-color: #f8d7da;
+    }
+
+    .bg-success {
+        background-color: #d4edda;
+    }
+
+    .bg-dark {
+        background-color: #343a40;
+    }
+
+    .text-white {
+        color: #fff;
+    }
+
+    .col {
+        display: inline-block;
+        width: 100%;
+        padding: 0 15px;
+        box-sizing: border-box;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+    }
+
+    .mb-5 {
+        margin-bottom: 3rem;
+    }
+
+    .container {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .mt-5 {
+        margin-top: 3rem;
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="mb-5">Task List</h1>
+    <table class="table">
+        <thead class="bg-dark text-white">
+        <tr>
+            <th scope="col" class="">#</th>
+            <th scope="col" class="">Name</th>
+            <th scope="col" class="">Description</th>
+            <th scope="col" class="">Assigned To</th>
+            <th scope="col" class="">Project</th>
+            <th scope="col" class="">Start Date</th>
+            <th scope="col" class="">End Date</th>
+            <th scope="col" class="">Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for task in object_list %}
+        <tr>
+            <th scope="row">{{ task.id }}</th>
+            <td>{{ task.name }}</td>
+            <td>{{ task.description }}</td>
+            <td>{{ task.assigned_to }}</td>
+            <td>{{ task.project }}</td>
+            <td>{{ task.start_date|date:"d/m/Y" }}</td>
+            <td>{{ task.end_date|date:"d/m/Y" }}</td>
+            <td>{% if task.status == "NEW" %}
+                <span class="badge bg-primary">{{ task.get_status_display }}</span>
+                {% elif task.status == "IN PROGRESS" %}
+                <span class="badge bg-warning text-dark">{{ task.get_status_display }}</span>
+                {% elif task.status == "COMPLETED" %}
+                <span class="badge bg-success">{{ task.get_status_display }}</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

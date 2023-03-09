@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Liste des projets</h1>
+<hr>
+
+{% if projects|length == 0 and tasks|length == 0 %}
+<div class="text-center my-5">
+    <p>Aucun projet ou tâche n'a été créé.</p>
+    <div class="custom-button-container btn-animated btn-primary">
+        <a href="{% url 'project_create' %}">Créer un projet</a>
+    </div>
+</div>
+<div class="row">
+    {% for project in object_list %}
+    <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">{{ project.name }}</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mt-3 mb-4">
+                    <p>{{ project.description }}</p>
+                    <li>Date de début: {{ project.start_date|date:"d-m-Y" }}</li>
+                    <li>Date de fin: {{ project.end_date|date:"d-m-Y" }}</li>
+                </ul>
+                <a href="{% url 'project_detail' pk=project.pk %}" class="btn btn-primary">Détails</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+{% endif %}
+{% endblock %}
