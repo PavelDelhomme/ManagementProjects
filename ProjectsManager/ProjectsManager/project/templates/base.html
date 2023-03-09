@@ -206,6 +206,87 @@
         box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
     }
 
+    /* Pour que ça soit plus beau */
+
+    .badge {
+        display: inline-block;
+        padding: 0.25em 0.4em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.25rem;
+    }
+
+    .bg-info {
+        background-color: #d1ecf1;
+    }
+
+    .bg-warning {
+        background-color: #fff3cd;
+    }
+
+    .text-dark {
+        color: #343a40;
+    }
+
+    .bg-danger {
+        background-color: #f8d7da;
+    }
+
+    .bg-success {
+        background-color: #d4edda;
+    }
+
+    .bg-blue {
+        background-color: #007bff;
+    }
+
+    .text-white {
+        color: #fff;
+    }
+
+    .col {
+        display: inline-block;
+        width: 100%;
+        padding: 0 15px;
+        box-sizing: border-box;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+    }
+
+    .mb-5 {
+        margin-bottom: 3rem;
+    }
+
+
+
+    .container {
+    }
+
+    }
+
+    .mt-5 {
+        margin-top: 3rem;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
 </style>
 <body>
 {% if user.is_authenticated %}
@@ -223,7 +304,7 @@
         <li class="nav-item"><a class="nav-link" href="{% url 'all_notifications' %}">Notifications ({{
             request.user.notifications.unread.count }})</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Déconnexion</a></li>
-        <li class="nav-item"><a class="nav-link username" href="#">{{ user.username }}</a></li>
+        <li class="nav-item"><a class="nav-link username" href="{% url 'profile' %}">{{ user.username }}</a></li>
     </ul>
 </nav>
 {% else %}

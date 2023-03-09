@@ -1,13 +1,15 @@
-from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 from django.views.generic import ListView
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 from .models import Project, Task, Event
 from .forms import ProjectForm, TaskForm
+
 
 class HomePageView(TemplateView):
     template_name = 'home.html'
@@ -43,16 +45,16 @@ class TaskCreateView(CreateView):
     template_name = 'project/task_create.html'
     success_url = reverse_lazy('project_list')
 
-    #def get_initial(self):
+    # def get_initial(self):
     #    project = get_object_or_404(Project, pk=self.kwargs['project_id'])
     #    return {'project': project}
 
     def form_valid(self, form):
         project = get_object_or_404(Project, id=self.kwargs['project_id'])
         form.instance.created_by = self.request.user
-        #form.instance.project_id = get_object_or_404(Project, pk=self.kwargs['project_id'])
+        # form.instance.project_id = get_object_or_404(Project, pk=self.kwargs['project_id'])
         form.instance.project = project
-        print(form.instance.project) # <Project: Project 1>
+        print(form.instance.project)  # <Project: Project 1>
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -71,6 +73,26 @@ class TaskListView(ListView):
 class TaskDetailView(ListView):
     model = Task
     template_name = 'project/task_detail.html'
+
+
+class TaskUpdateView(UpdateView):
+    model = Task
+    form_class = TaskForm
+    template_name = 'project/task_update.html'
+
+    # success_url = reverse_lazy('project_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['project'] = ProjectForm()
+        return context
+
+    def form_valid(self, form):
+        form.instance.modified_by = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('task_detail', kwargs={'pk': self.object.pk})
 
 
 def calendar(request):
@@ -121,6 +143,7 @@ def calendar_view(request):
     context = {'events': events}
     return render(request, 'project/calendar.html', context)
 
+
 @login_required
 def add_task_comment(request, pk):
     task = get_object_or_404(Task, pk=pk)
@@ -165,6 +188,7 @@ def calendar_view(request):
         })
     return render(request, 'project/calendar.html', {'events': event_list})
 
+
 def get_calendar_events():
     projects = Project.objects.all()
     tasks = Task.objects.all()
@@ -189,7 +213,28 @@ def get_calendar_events():
 
 
 def event_api(request):
-
     event_list = get_calendar_events()
     context = {'event_list': event_list}
     return render(request, 'project/calendar.html', context)
+
+
+@login_required
+def profile(request):
+    if request.method == 'POST':
+        user_form = UserChangeForm(request.POST, instance=request.user)
+        password_form = PasswordChangeForm(request.user, request.POST)
+
+        if user_form.is_valid() and password_form.is_valid():
+            user = user_form.save()
+            update_session_auth_hash(request, user)
+            password_form.save()
+            return redirect('profile')
+    else:
+        user_form = UserChangeForm(instance=request.user)
+        password_form = PasswordChangeForm(request.user)
+
+    context = {
+        'user_form': user_form,
+        'password_form': password_form,
+    }
+    return render(request, 'profile.html', context)

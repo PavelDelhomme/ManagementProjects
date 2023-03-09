@@ -1,9 +1,101 @@
 {% extends "base.html" %}
 
-
 {% block content %}
+<style type="text/css">
 
-    <h1>Bienvenue sur ProjectManager !</h1>
-    <p>Ceci est la page d'accueil de notre site web.</p>
+    .container-fluid {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+    }
 
+    .st0 {
+        fill: #0071C5;
+    }
+
+    .st1 {
+        fill: #FFFFFF;
+    }
+
+    .btn {
+        display: inline-block;
+        font-weight: 400;
+        color: #fff;
+        text-align: center;
+        vertical-align: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background-color: transparent;
+        border: 1px solid transparent;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        transition: color 0.15s ease-in-out,
+        background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out,
+        box-shadow 0.15s ease-in-out;
+    }
+
+    .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+        transition: all 0.4s ease;
+    }
+
+    .btn-primary:hover {
+        color: #fff;
+        background-color: #0069d9;
+        border-color: #0062cc;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px 0 rgba(0, 123, 255, 0.2), 0 6px 20px 0 rgba(0, 123, 255, 0.19);
+    }
+
+    .btn-lg {
+        padding: 0.5rem 1rem;
+        font-size: 1.25rem;
+        line-height: 1.5;
+        border-radius: 0.3rem;
+    }
+
+    .content {
+        box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.3);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+
+</style>
+<div class="container">
+    <div class="content">
+        <div class="row justify-content-center align-items-center vh-100 text-center">
+            <div class="col-lg-6 col-md-8 col-10">
+                <svg version="1.1" id="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+
+                    <g>
+                        <rect x="63.8" y="174.6" class="st0" width="128" height="128"/>
+                        <rect x="319.2" y="174.6" class="st0" width="128" height="128"/>
+                        <path class="st1" d="M483.5,297.7c-13.2-25.6-33.6-47-59.3-60.1L384,204.6v-76.4c0-16.7-13.6-30.2-30.2-30.2H158.2
+                        c-16.7,0-30.2,13.6-30.2,30.2v76.4l-40.2,33.1c-25.7,13.1-46.1,34.5-59.3,60.1C14.1,334.9,0,365.9,0,398.7
+                        c0,32.7,14.1,63.7,38.7,85.6c13.2,25.6,33.6,47,59.3,60.1l40.2,33.1v75.7c0,16.7,13.6,30.2,30.2,30.2h195.6
+                        c16.7,0,30.2-13.6,30.2-30.2v-75.7l40.2-33.1c25.7-13.1,46.1-34.5,59.3-60.1C497.9,462.3,512,431.3,512,398.7
+                        C512,365.9,497.9,334.9,483.5,297.7z M256,366.1c-57.9,0-105-47.1-105-105c0-57.9,47.1-105,105-105c57.9,0,105,47.1,105,105
+                        C361,319,313.9,366.1,256,366.1z"/>
+                    </g>
+                </svg>
+                <h1 class="text-center my-5">Bienvenue sur ProjectManager !</h1>
+                <div class="d-grid gap-3">
+                    <a href="{% url 'project_create' %}" class="btn btn-primary btn-lg">Créer un projet</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 {% endblock %}

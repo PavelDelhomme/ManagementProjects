@@ -34,8 +34,8 @@
         background-color: #d4edda;
     }
 
-    .bg-dark {
-        background-color: #343a40;
+    .bg-blue {
+        background-color: #007bff;
     }
 
     .text-white {
@@ -80,9 +80,9 @@
 </style>
 
 <div class="container mt-5">
-    <h1 class="mb-5">Task List</h1>
+    <h1 class="mb-5">Liste des tâches</h1>
     <table class="table">
-        <thead class="bg-dark text-white">
+        <thead class="bg-blue text-white">
         <tr>
             <th scope="col" class="">#</th>
             <th scope="col" class="">Name</th>
@@ -100,8 +100,12 @@
             <th scope="row">{{ task.id }}</th>
             <td>{{ task.name }}</td>
             <td>{{ task.description }}</td>
+            {% if task.assigned_to %}
             <td>{{ task.assigned_to }}</td>
-            <td>{{ task.project }}</td>
+            {% else %}
+            <td><a href="{% url 'task_update' task.pk">Ajouter un utilisateur</a></td>
+            {% endif %}
+            <td><a href="{% url 'project_detail' task.project.pk %}">{{ task.project.name }}</a></td>
             <td>{{ task.start_date|date:"d/m/Y" }}</td>
             <td>{{ task.end_date|date:"d/m/Y" }}</td>
             <td>{% if task.status == "NEW" %}
