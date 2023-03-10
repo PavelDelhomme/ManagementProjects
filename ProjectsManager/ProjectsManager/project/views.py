@@ -8,7 +8,7 @@ from django.views.generic import CreateView, UpdateView
 from django.views.generic import ListView
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy, reverse
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from .models import Project, Task, Event
 from .forms import ProjectForm, TaskForm
 from django.http import JsonResponse
@@ -75,6 +75,22 @@ class ProjectUpdateView(UpdateView):
     def form_valid(self, form):
         form.instance.updated_by = self.request.user
         return super().form_valid(form)
+
+
+class ProjectDeleteView(DeleteView):
+    model = Project
+    template_name = 'project/project_delete.html'
+    success_url = reverse_lazy('project_list_by_start_date')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Le projet a été supprimé avec succès.')
+        return super().delete(request, *args, **kwargs)
+
+    def get_context_object_name(self, queryset=None):
+        obj = super().get_oject(queryset=queryset)
+        if not obj.can_be_deleted_by(self.request.user):
+            raise Http404
+        return obj
 
 
 class TaskCreateView(CreateView):

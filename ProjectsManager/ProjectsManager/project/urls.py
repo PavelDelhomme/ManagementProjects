@@ -1,11 +1,13 @@
 from django.urls import path
-from .views import ProjectListView, ProjectCreateView, ProjectUpdateView, project_detail, \
-    calendar, \
-    TaskListView, add_task_comment, TaskDetailView, TaskCreateView, TaskUpdateView, TaskDeleteView, \
-    SignUpView, \
-    profile, \
-    event_api, \
-    all_notifications
+from .views import (
+    ProjectListView, ProjectCreateView, ProjectUpdateView, project_detail, ProjectDeleteView,
+    calendar,
+    TaskListView, add_task_comment, TaskDetailView, TaskCreateView, TaskUpdateView, TaskDeleteView,
+    SignUpView,
+    profile,
+    event_api,
+    all_notifications,
+)
 
 urlpatterns = [
 
@@ -27,6 +29,7 @@ urlpatterns = [
     path('', ProjectListView.as_view(), name='project_list_by_start_date'),  # lister tous les projets par date de début
     path('<int:pk>/update/', ProjectUpdateView.as_view(), name='project_update'),  # mettre à jour un projet
     path('create/', ProjectCreateView.as_view(), name='project_create'),  # créer un projet
+    path('projects/<int:pk>/delete/', ProjectDeleteView.as_view(), name='project_delete'),  # supprimer un projet
     path('project_detail/<int:pk>/', project_detail, name='project_detail'),  # détaller un projet
     path('projects/', ProjectListView.as_view(), name='project_list'),  # lister tous les projets
     path('projects/by-start-date/', ProjectListView.as_view(), name='project_list_by_start_date'),

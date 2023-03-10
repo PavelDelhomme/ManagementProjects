@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
+
 class Project(models.Model):
     """
     Project model
@@ -11,6 +12,8 @@ class Project(models.Model):
     name = models.CharField(max_length=200, verbose_name=_('Nom'))  # project name
     description = models.TextField(verbose_name=_('Description'))  # project description
 
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
+                                   related_name='created_projects')
     assigned_to = models.ManyToManyField(User, related_name='assigned_projects')  # users assigned to the project
     start_date = models.DateField()  # project start date
     end_date = models.DateField()  # project end date
@@ -19,6 +22,8 @@ class Project(models.Model):
     def tasks(self):
         return self.task_set.all()
 
+    def can_be_deleted_by(self, user):
+        return user.is_superuser or self.created_by == user or user in self.assigned_to.all()
 
 class Task(models.Model):
     """
@@ -39,12 +44,12 @@ class Task(models.Model):
     def get_absolute_url(self):
         return reverse('task_detail', kwargs={'project_id': self.project.pk, 'task_id': self.pk})
 
-    #def get_absolute_url(self):
+    # def get_absolute_url(self):
     #    return reverse('task_update', kwargs={'task_id': self.pk})
 
-    #def get_absolute_url(self):
-        #return reverse('task-detail', kwargs={'pk': self.pk})
-        # return reverse('task_detail', kwargs={'priject_id': self.project.pk, 'task_id': self.pk})
+    # def get_absolute_url(self):
+    # return reverse('task-detail', kwargs={'pk': self.pk})
+    # return reverse('task_detail', kwargs={'priject_id': self.project.pk, 'task_id': self.pk})
 
 
 class Event(models.Model):
