@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .message {
+        background-color: #e5e5e5;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+        max-width: 80%;
+    }
+
+    .message .user {
+        font-weight: bold;
+    }
+
+    .message .content {
+        margin-top: 5px;
+    }
+
+    .container {
+        width: 100%;
+        margin-right: auto;
+        margin-left: auto;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    .col-md-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .col-md-8 {
+        flex: 0 0 66.666667%;
+        max-width: 66.666667%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Participants :</h2>
+            <ul>
+                {% for participant in object.participants.all %}
+                <li>{{ participant.get_full_name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-8">
+            <h2>Messages :</h2>
+            <ul>
+                {% for message in messages %}
+                <li>{{ message.user }} : {{ message.content }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock content %}

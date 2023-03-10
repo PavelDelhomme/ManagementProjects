@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h1>Conversation pour le projet "{{ project.name }}"</h1>
+        </div>
+        <div class="card-body">
+          {% if messages %}
+          <div class="alert alert-info">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+          <div class="conversation">
+            {% for message in project.messages.all %}
+            <div class="message">
+              <p class="author">{{ message.author }}</p>
+              <p class="content">{{ message.content }}</p>
+            </div>
+            {% empty %}
+            <p>Aucun message pour le moment.</p>
+            {% endfor %}
+          </div>
+          <hr>
+          <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="id_content">Message :</label>
+              <textarea class="form-control" id="id_content" name="content" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+          </form>
+        </div>
+        <div class="card-footer">
+          <a href="{% url 'project_detail' project.pk %}" class="btn btn-secondary">Retour au projet</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

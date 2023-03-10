@@ -1,19 +1,26 @@
+import django.forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import DeleteView
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DetailView
 from django.views.generic import ListView
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy, reverse
 from django.http import JsonResponse, Http404
-from .models import Project, Task, Event
-from .forms import ProjectForm, TaskForm
+from django.db.models import Max
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from collections import OrderedDict
+from django.contrib.auth.models import User
+
+# perso
+from .models import Project, Task, Event, Message, Conversation
+from .forms import ProjectForm, TaskForm, MessageForm
 
 
 class HomePageView(TemplateView):
@@ -337,3 +344,115 @@ def profile(request):
         'password_form': password_form,  # On recupere le formulaire de modification du mot de passe
     }
     return render(request, 'profile.html', context)  # On retourne le template profile.html avec le contexte
+
+
+class MessageCreateView(CreateView):
+    model = Message
+    form_class = MessageForm
+    template_name = 'project/message_create.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.sender = self.request.user
+        form.instance.recipient = get_object_or_404(User, id=self.kwargs['user_id'])
+        form.instance.project = get_object_or_404(Project, id=self.kwargs['project_id'])
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        project = get_object_or_404(Project, pk=self.kwargs['project_id'])
+        context['project'] = project
+        return context
+
+    def get_success_url(self):
+        project_id = self.kwargs['project_id']
+        return reverse('project_detail', kwargs={'pk': project_id})
+
+
+class ProjectConversationView(ListView):
+    model = Message
+    template_name = 'project/project_conversation.html'
+
+    def get(self, request, pk):
+        project = get_object_or_404(Project, id=pk)
+        context = {'project': project}
+        return render(request, self.template_name, context)
+
+    # def get_context_data(self, **kwargs):
+    #    context = super().get_context_data(**kwargs)
+    #    context['project'] = get_object_or_404(Project, id=self.kwargs['project_id'])
+    #    return context
+
+    def post(self, request, pk):
+        project = get_object_or_404(Project, id=pk)
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user
+            message.project = project
+            message.save()
+            message.success(request, 'Message envoyé avec succès')
+            return redirect('project_conversation', pk=pk)
+        context = {'project': project, 'form': form}
+        return render(request, self.template_name, context)
+
+    # def get_success_url(self):
+    #    return reverse('project_detail', args=[self.object.project.id])
+
+
+class MessageDetailView(LoginRequiredMixin, DetailView):
+    model = Message
+    template_name = 'project/message_detail.html'
+    context_object_name = 'message'
+
+    def get_queryset(self):
+        return super().get_queryset().filter(project__id=self.kwargs['project_id'])
+
+    # def get_context_data(self, **kwargs):
+    #    context = super().get_context_data(**kwargs)
+    #    context['project'] = get_object_or_404(Project, id=self.kwargs['project_id'])
+    #    return context
+
+
+class ConversationListView(ListView):
+    template_name = 'project/conversation_list.html'
+
+    def get_queryset(self):
+        return Conversation.objects.filter(users=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        conversations = context['object_list']
+
+        last_messages = []
+        for conversation in conversations:
+            last_message = conversation.messages.aggregate(Max('timestamp'))['timestamp__max']
+            last_messages.append({'conversation': conversation, 'last_message': last_message})
+
+        context['last_messages'] = last_messages
+        return context
+
+
+class ConversationDetailView(LoginRequiredMixin, DetailView):
+    model = Conversation
+    template_name = 'project/conversation_detail.html'
+
+    def get_queryset(self):
+        return self.model.objects.filter(participants=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        conversation = self.get_object()
+        messages = conversation.messages.order_by('created_at')
+        messages_list = []
+        for message in messages:
+            message_dict = OrderedDict()
+            message_dict['user'] = message.user.get_full_name()
+            message_dict['content'] = message.content
+            messages_list.append(message_dict)
+        context['messages'] = messages_list
+        return context

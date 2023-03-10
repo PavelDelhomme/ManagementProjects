@@ -25,6 +25,7 @@ class Project(models.Model):
     def can_be_deleted_by(self, user):
         return user.is_superuser or self.created_by == user or user in self.assigned_to.all()
 
+
 class Task(models.Model):
     """
     Task model
@@ -63,3 +64,24 @@ class Event(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)  # task to which the event belongs
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # user to which the event belongs
     comments = models.TextField(blank=True)  # event comments
+
+
+class Conversation(models.Model):
+    participants = models.ManyToManyField(User, related_name='conversations')
+    last_message = models.ForeignKey(
+        'Message',
+        on_delete=models.SET_NULL,
+        related_name='conversation_last_messages',
+        blank=True,
+        null=True,
+    )
+
+
+class Message(models.Model):
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']

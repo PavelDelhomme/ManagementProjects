@@ -4,6 +4,8 @@ from .views import (
     calendar,
     TaskListView, add_task_comment, TaskDetailView, TaskCreateView, TaskUpdateView, TaskDeleteView,
     SignUpView,
+    MessageCreateView,
+    MessageDetailView,
     profile,
     event_api,
     all_notifications,
@@ -43,4 +45,8 @@ urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),  # s'inscrire
     path('notifications/', all_notifications, name='all_notifications'),  # afficher toutes les notifications
     path('profile/', profile, name='profile'),  # afficher le profil de l'utilisateur
+
+    # Message URLs
+    path('messages/create/<int:project_id>/', MessageCreateView.as_view(), name='message_create'),
+
 ]

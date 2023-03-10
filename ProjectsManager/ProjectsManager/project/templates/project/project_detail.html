@@ -147,6 +147,16 @@
                     <h2>Commentaires :</h2>
                     <p>{{ project.comments }}</p>
                     <hr>
+                    <h2>Messages</h2>
+                    <a href="{% url 'message_create' project_id=project.pk %}" class="btn btn-primary">Nouveau
+                        message</a>
+                    <ul>
+                        {% for message in project.messages.all %}
+                        <li>{{ message.content }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <hr>
                     <h2>Utilisateurs assignés au projet :</h2>
                     <ul>
                         {% for user in project.assigned_to.all %}

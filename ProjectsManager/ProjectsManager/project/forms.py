@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.widgets import SelectDateWidget
-from .models import Project, Task
+from .models import Project, Task, Message
 
 
 class ProjectForm(forms.ModelForm):
@@ -28,3 +28,16 @@ class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = ['name', 'description', 'assigned_to', 'start_date', 'end_date', 'priority', 'status']
+
+
+class MessageForm(forms.ModelForm):
+    content = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=True)
+    recipient_id = forms.IntegerField(widget=forms.HiddenInput())  # nouveau champ caché pour stocker l'identifiant du destinataire
+
+    def __init__(self, user=None, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = Message
+        fields = ['content', 'recipient_id']
