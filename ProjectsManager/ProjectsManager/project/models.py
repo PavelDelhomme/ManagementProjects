@@ -1,18 +1,23 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-
+from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
 
 class Project(models.Model):
     """
     Project model
     """
-    name = models.CharField(max_length=200)  # project name
-    description = models.TextField()  # project description
+    name = models.CharField(max_length=200, verbose_name=_('Nom'))  # project name
+    description = models.TextField(verbose_name=_('Description'))  # project description
+
     assigned_to = models.ManyToManyField(User, related_name='assigned_projects')  # users assigned to the project
     start_date = models.DateField()  # project start date
     end_date = models.DateField()  # project end date
     comments = models.TextField(blank=True)  # project comments
+
+    def tasks(self):
+        return self.task_set.all()
 
 
 class Task(models.Model):
@@ -30,6 +35,16 @@ class Task(models.Model):
     status = models.CharField(max_length=20, choices=[('incomplete', 'Incomplète'), ('complete', 'Complète')],
                               default='incomplete')  # task status
     comments = models.TextField(blank=True)  # task comments
+
+    def get_absolute_url(self):
+        return reverse('task_detail', kwargs={'project_id': self.project.pk, 'task_id': self.pk})
+
+    #def get_absolute_url(self):
+    #    return reverse('task_update', kwargs={'task_id': self.pk})
+
+    #def get_absolute_url(self):
+        #return reverse('task-detail', kwargs={'pk': self.pk})
+        # return reverse('task_detail', kwargs={'priject_id': self.project.pk, 'task_id': self.pk})
 
 
 class Event(models.Model):

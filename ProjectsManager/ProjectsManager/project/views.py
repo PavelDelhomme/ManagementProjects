@@ -1,17 +1,20 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.generic.edit import DeleteView
 from django.views.generic import CreateView, UpdateView
 from django.views.generic import ListView
 from django.views.generic import TemplateView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.http import JsonResponse
 from .models import Project, Task, Event
 from .forms import ProjectForm, TaskForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+
 
 class HomePageView(TemplateView):
     template_name = 'home.html'  # Le template qui va etre affiche dans la page home
@@ -60,6 +63,17 @@ class ProjectCreateView(CreateView):
         :return:
         """
         return reverse_lazy('project_detail', kwargs={'pk': self.object.pk})  # On retourne la page project_detail
+
+
+class ProjectUpdateView(UpdateView):
+    model = Project
+    fields = ['name', 'description', 'assigned_to', 'start_date', 'end_date', 'comments']
+    template_name = 'project/project_update.html'
+    success_url = reverse_lazy('project_list_by_start_date')
+
+    def form_valid(self, form):
+        form.instance.updated_by = self.request.user
+        return super().form_valid(form)
 
 
 class TaskCreateView(CreateView):
@@ -117,6 +131,14 @@ class TaskDetailView(ListView):
     model = Task  # Le model sur lequel on va travailler
     template_name = 'project/task_detail.html'  # Le template qui va etre affiche dans la page task_detail
 
+    def get_queryset(self):
+        project_id = self.kwargs['project_id']
+        task_id = self.kwargs['task_id']
+        messages.error(self.request, f"Project ID: {project_id}")
+        messages.error(self.request, f"Task ID: {task_id}")
+        queryset = super().get_queryset()
+        return queryset.filter(pk=task_id, project__pk=project_id)
+
 
 class TaskUpdateView(UpdateView):
     """
@@ -152,7 +174,25 @@ class TaskUpdateView(UpdateView):
         Methode qui va permettre de rediriger l'utilisateur apres la mise a jour de la tache
         :return:
         """
-        return reverse_lazy('task_detail', kwargs={'pk': self.object.pk})  # On retourne la page task_detail
+        return reverse('task_detail', kwargs={'project_id': self.object.project.pk, 'task_id': self.object.pk})
+
+
+class TaskDeleteView(DeleteView):
+    """
+    Supprimer une tache
+    """
+    model = Task
+    template_name = 'project/task_confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse_lazy('task_list', kwargs={'project_id': self.object.project.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['task'] = self.object
+        return context
+    # success_url = reverse_lazy('task_list') # La page sur laquelle on va etre redirige apres la suppression de la
+    # tache
 
 
 @login_required  # On demande a l'utilisateur d'etre connecte
@@ -229,7 +269,6 @@ def calendar(request):
     return render(request, 'project/calendar.html', {'events': events})
 
 
-
 @csrf_exempt
 def event_api(request):
     events = []
@@ -244,8 +283,6 @@ def event_api(request):
         events.append(event)
 
     return JsonResponse(events, safe=False)
-
-
 
 
 @login_required

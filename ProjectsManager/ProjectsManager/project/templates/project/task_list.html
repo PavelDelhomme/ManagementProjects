@@ -99,6 +99,8 @@
             <th scope="col" class="">End Date</th> <!-- colonne date de fin de la tâche -->
             <!-- colonne date de fin de la tâche -->
             <th scope="col" class="">Status</th> <!-- colonne état de la tâche -->
+            <!-- colonne état de la tâche -->
+            <th scope="col" class="">Action</th> <!-- colonne action sur la tâche  -->
         </tr>
         </thead>
         <!-- fin de l'en-tête du tableau -->
@@ -107,7 +109,7 @@
         <tr> <!-- ligne du tableau -->
             <th scope="row">{{ task.id }}</th>
             <!-- id de la tâche -->
-            <td>{{ task.name }}</td>
+            <td><a href="{% url 'task_update' task.pk %}">{{ task.name }}</a></td>
             <!-- nom de la tâche -->
             <td>{{ task.description }}</td>
             <!-- description de la tâche -->
@@ -125,23 +127,30 @@
             <td>{{ task.end_date|date:"d/m/Y" }}</td>
             <!--date de fin de la tâche -->
             <td>{% if task.status == "NEW" %} <!--état de la tâche-->
-                <span class="badge bg-primary">{{ task.get_status_display }}</span> <!--affichage de l'état de la tâche-->
+                <span class="badge bg-primary">{{ task.get_status_display }}</span>
+                <!--affichage de l'état de la tâche-->
                 {% elif task.status == "IN PROGRESS" %} <!--si l'état de la tâche est "En cours"
                 <span class="badge bg-warning text-dark">{{ task.get_status_display }}</span> <!--affichage de l'état de
                 la tâche-->
                 {% elif task.status == "COMPLETED" %} <!-- si l'état de la tâche est "Terminée" -->
-                <span class="badge bg-success">{{ task.get_status_display }}</span> <!--affichage de l'état de la tâche-->
+                <span class="badge bg-success">{{ task.get_status_display }}</span>
+                <!--affichage de l'état de la tâche-->
                 {% elif task.status == "CANCELED" %} <!-- si l'état de la tâche est "Annulée" -->
-                <span class="badge bg-danger">{{ task.get_status_display }}</span> <!--affichage de l'état de la tâche-->
+                <span class="badge bg-danger">{{ task.get_status_display }}</span>
+                <!--affichage de l'état de la tâche-->
                 {% endif %} <!-- fin de la condition-->
+            </td>
+            <td>
+                <a href="{% url 'task_update' task.pk %}" class="btn btn-primary">Modifier</a>
+                <a href="{% url 'task_delete' task.pk %}" class="btn btn-danger">Supprimer</a>
             </td>
             <!-- fin de la colonne état de la tâche-->
         </tr>
         <!-- fin de la ligne du tableau -->
         {% endfor %} <!--fin de la boucle sur les tâches-->
         </tbody>
-        <!--fin du corps du tableau
+        <!--fin du corps du tableau -->
     </table>
-    <!--fin du tableau des tâches
-</div> <!--fin du container
+    <!--fin du tableau des tâches-->
+</div> <!--fin du container-->
 {% endblock %}

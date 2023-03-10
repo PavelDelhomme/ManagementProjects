@@ -1,12 +1,18 @@
 from django.urls import path
-from .views import ProjectListView, ProjectCreateView, calendar, TaskListView, add_task_comment, TaskDetailView, \
-    SignUpView, all_notifications, project_detail, TaskCreateView, TaskUpdateView, profile, event_api
+from .views import ProjectListView, ProjectCreateView, ProjectUpdateView, project_detail, \
+    calendar, \
+    TaskListView, add_task_comment, TaskDetailView, TaskCreateView, TaskUpdateView, TaskDeleteView, \
+    SignUpView, \
+    profile, \
+    event_api, \
+    all_notifications
 
 urlpatterns = [
 
     # Task URLs
     path('tasks/', TaskListView.as_view(), name='task_list'),  # lister toutes les tâches
-    path('tasks/<int:pk>/', TaskDetailView.as_view(), name='task_detail'),  # detailler une tâche
+    path('tasks/<int:project_id>/<int:task_id>/', TaskDetailView.as_view(), name='task_detail'),
+    # detailler une tâche
     path('tasks/create/<int:project_id>/', TaskCreateView.as_view(), name='task_create'),  # créer une tâche
     path('tasks/<int:pk>/add-comment/', add_task_comment, name='task_add_comment'),
     # ajouter un commentaire à une tâche
@@ -14,9 +20,12 @@ urlpatterns = [
     path('tasks/by-priority/', TaskListView.as_view(), name='task_list_by_priority'),
     # lister toutes les tâches par priorité
     path('tasks/<int:pk>/update/', TaskUpdateView.as_view(), name='task_update'),  # mettre à jour une tâche
+    # supprimer une tâche
+    path('tasks/<int:pk>/delete/', TaskDeleteView.as_view(), name='task_delete'),  # supprimer une tâche
 
     # Project URLs
     path('', ProjectListView.as_view(), name='project_list_by_start_date'),  # lister tous les projets par date de début
+    path('<int:pk>/update/', ProjectUpdateView.as_view(), name='project_update'),  # mettre à jour un projet
     path('create/', ProjectCreateView.as_view(), name='project_create'),  # créer un projet
     path('project_detail/<int:pk>/', project_detail, name='project_detail'),  # détaller un projet
     path('projects/', ProjectListView.as_view(), name='project_list'),  # lister tous les projets

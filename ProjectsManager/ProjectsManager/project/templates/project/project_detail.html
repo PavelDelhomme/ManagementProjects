@@ -1,23 +1,161 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>{{ project.name }}</h1> <!-- titre -->
-<p>{{ project.description }}</p> <!-- description -->
-<p>Début : {{ project.start_date }}</p> <!-- date de début -->
-<p>Fin : {{ project.end_date }}</p> <!-- date de fin -->
+<style>
+    /* Style pour la page project_detail.html */
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
 
-<h2>Tâches du projet :</h2> <!-- tâches -->
-<ul> <!-- liste des tâches -->
-    {% for task in project.tasks.all %} <!-- boucle sur les tâches -->
-    <li><a href="{% url 'task_detail' task.pk %}">{{ task.name }}</a></li> <!-- lien vers la tâche -->
-    {% empty %} <!-- si aucune tâche -->
-    <li>Aucune tâche pour le moment.</li> <!-- message -->
-    {% endfor %} <!-- fin de la boucle -->
-</ul>
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
 
-<a href="{% url 'task_create' project_id=project.pk %}" class="btn btn-primary">Créer une
-    tâche</a> <!-- bouton pour créer une tâche -->
+    h2 {
+        font-size: 2rem;
+        font-weight: 500;
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
 
-<h2>Commentaires :</h2> <!-- commentaires -->
-<p>{{ project.comments }}</p> <!-- commentaires -->
+    ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    li {
+        margin-bottom: 10px;
+    }
+
+    .btn {
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        border: 1px solid transparent;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        transition: all 0.15s ease-in-out;
+    }
+
+    .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        color: #fff;
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+
+    .btn-secondary {
+        color: #fff;
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+        color: #fff;
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+
+    .btn-danger {
+        color: #fff;
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+        color: #fff;
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+
+    p {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: 500;
+    }
+
+    textarea {
+        resize: none;
+        height: 100px;
+        font-size: 1.2rem;
+        line-height: 1.6;
+    }
+
+    input[type="submit"] {
+        margin-top: 20px;
+    }
+
+    .alert {
+        font-size: 1.2rem;
+        margin-top: 20px;
+        margin-bottom: 0;
+        padding: 0.75rem 1.25rem;
+        border-radius: 0.25rem;
+    }
+
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+
+</style>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h1>{{ project.name }}</h1> <!-- titre -->
+                </div>
+                <div class="card-body">
+                    <p>{{ project.description }}</p> <!-- description -->
+                    <p><strong>Début :</strong> {{ project.start_date }}</p> <!-- date de début -->
+                    <p><strong>Fin :</strong> {{ project.end_date }}</p> <!-- date de fin -->
+                    <hr>
+                    <h2>Tâches du projet :</h2> <!-- tâches -->
+                    <ul class="list-group"> <!-- liste des tâches -->
+                        {% for task in project.tasks.all %} <!-- boucle sur les tâches liées au projet -->
+                        <li class="list-group-item"><a
+                                href="{% url 'task_detail' project_id=project.pk task_id=task.pk %}">{{ task.name }}</a>
+                        </li>
+                        <!-- lien vers la page de détail de la tâche -->
+                        {% empty %} <!-- si aucune tâche -->
+                        <li class="list-group-item">Aucune tâche pour le moment.</li> <!-- message -->
+                        {% endfor %} <!-- fin de la boucle -->
+                    </ul>
+                    <a href="{% url 'task_create' project_id=project.pk %}" class="btn btn-primary mt-3">Créer une
+                        tâche</a>
+                    <!-- bouton pour créer une tâche -->
+                    <hr>
+                    <h2>Commentaires :</h2> <!-- commentaires -->
+                    <p>{{ project.comments }}</p> <!-- commentaires -->
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'project_update' project.pk %}" class="btn btn-primary">Modifier le projet</a>
+                    <!-- bouton pour modifier le projet -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
