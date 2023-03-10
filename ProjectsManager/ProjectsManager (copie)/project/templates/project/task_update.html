@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5"> <!-- container -->
+  <h1 class="mb-5"> <!-- titre -->
+    Modifier la tâche "{{ task.name }}" du projet "{{ task.project.name }}"
+  </h1> <!-- titre -->
+  <form method="post"> <!-- formulaire -->
+    {% csrf_token %} <!-- token -->
+    {{ form.as_p }} <!-- champs du formulaire -->
+    <button type="submit" class="btn btn-primary">Modifier</button> <!-- bouton -->
+  </form> <!-- formulaire -->
+</div> <!-- container -->
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto mt-5">
+            <h2 class="text-center">Modifier le profil</h2> /* titre */
+            <form method="post"> /* formulaire */
+                {% csrf_token %} /* token */
+                <div class="mb-3">
+                    <label for="username" class="form-label">Nom d'utilisateur</label>
+                    <input type="text" name="username" id="username" class="form-control" value="{{ user.username }}">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Adresse email</label>
+                    <input type="email" name="email" id="email" class="form-control" value="{{ user.email }}">
+                </div>
+                <div class="mb-3">
+                    <label for="first_name" class="form-label">Prénom</label>
+                    <input type="text" name="first_name" id="first_name" class="form-control"
+                           value="{{ user.first_name }}">
+                </div>
+                <div class="mb-3">
+                    <label for="last_name" class="form-label">Nom</label>
+                    <input type="text" name="last_name" id="last_name" class="form-control"
+                           value="{{ user.last_name }}">
+                </div>
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    form {
+        margin: 50px auto;
+        max-width: 500px;
+        padding: 20px;
+        background-color: #f5f5f5;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.2);
+    }
+    form h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    form label {
+        display: block;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    form input[type="text"],
+    form textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: none;
+        background-color: #fff;
+        border-radius: 5px;
+        font-size: 18px;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    form input[type="submit"] {
+        padding: 10px;
+        border: none;
+        background-color: #2d88ff;
+        border-radius: 5px;
+        font-size: 18px;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    form input[type="submit"]:hover {
+        background-color: #1b5abf;
+    }
+</style>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="car-header">{{ form.title }}</div> <!-- titre -->
+                <div class="card-body"> <!-- formulaire -->
+                    <form method="POST">
+                        {% csrf_token %} <!-- token -->
+                        {{ form.as_p }} <!-- champs du formulaire -->
+                        <button type="submit" class="btn btn-primary">Enregister</button> <!-- bouton -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Récupère l'élément HTML du bouton "Aujourd'hui"
+    var todayBtn = document.getElementById("todayBtn");
+
+    // Ajoute un écouteur d'événements au clic sur le bouton "Aujourd'hui"
+    todayBtn.addEventListener("click", function () {
+        // Récupère l'élément HTML de la date de début
+        var startDateInput = document.getElementById("id_start_date");
+
+        // Crée un objet Date avec la date d'aujourd'hui
+        var todayDate = new Date();
+
+        // Met la date d'aujourd'hui dans le champ de la date de début
+        startDateInput.value = todayDate.toISOString().substring(0, 10);
+    });
+</script>
+
+{% endblock %}

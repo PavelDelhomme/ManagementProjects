@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block content %}
+    <h1>Inscription</h1> <!-- titre -->
+    <form method="post"> <!-- formulaire -->
+        {% csrf_token %} <!-- token -->
+        {{ form.as_p }} <!-- champs du formulaire -->
+        <button type="submit">S'inscrire</button> <!-- bouton -->
+    </form> <!-- formulaire -->
+{% endblock %}
+

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Create Task</h1> <!-- titre -->
+
+<form method="post"> <!-- formulaire -->
+    {% csrf_token %} <!-- token -->
+    {{ form.as_p }} <!-- champs du formulaire -->
+    <label for="{ form.project.id_for_label }">Project</label> <!-- champs du formulaire -->
+    {{ project_form.as_p }} <!-- champs du formulaire -->
+    <button type="submit">Create</button> <!-- bouton -->
+</form>
+
+{% endblock %}

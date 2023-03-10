@@ -1,0 +1,367 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} - Project Manager</title> <!-- titre -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale/fr.js"></script>
+
+</head>
+<style>
+    * { /* style pour tous les éléments */
+        box-sizing: border-box; /* permet de définir la largeur d'un élément en incluant les padding et border */
+    }
+
+    body { /* style pour le body */
+        font-family: Arial, Helvetica, sans-serif; /* police de caractère */
+        margin: 0; /* marge extérieure */
+    }
+
+    .header { /* style pour le header */
+        background-color: #f1f1f1; /* couleur de fond */
+        text-align: center; /* alignement du texte */
+        padding: 20px; /* padding */
+    }
+
+    .row { /* style pour la row */
+        display: flex; /* permet de créer une ligne de blocs */
+        flex-wrap: wrap; /* permet de créer une ligne de blocs */
+        width: 100%; /* largeur */
+    }
+
+    .column { /* style pour la column */
+        flex: 1; /* permet de créer une colonne de blocs */
+        padding: 5px; /* padding */
+    }
+
+    .card { /* style pour la card */
+        background-color: #ddd; /* couleur de fond */
+        padding: 20px; /* padding */
+        margin-bottom: 20px; /* marge extérieure */
+    }
+
+    .card-project { /* style pour la card-project */
+        background-color: #7cb342; /* couleur de fond */
+    }
+
+    .card-task { /* style pour la card-task */
+        background-color: #ffb900; /* couleur de fond */
+    }
+
+
+    h3 { /* style pour le titre */
+        margin: 0; /* marge extérieure */
+    }
+
+    /* Style pour le texte "Aucun projet pour le moment" */
+    .my-5 p {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    /* Style pour le bouton "Créer un projet" */
+    .my-5 .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 4px;
+        color: #fff;
+        text-decoration: none;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    /* Style pour le bouton "Créer un projet" au survol */
+    .my-5 .btn-primary:hover {
+        background-color: #0062cc;
+        border-color: #005cbf;
+    }
+
+    /* Style pour le bouton "Créer un projet" au clic */
+    .custom-button-container {
+        text-align: center;
+        margin-top: 20px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.5s;
+        z-index: 1;
+    }
+
+    .btn-primary:before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        opacity: 0;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+        transition: all 0.5s;
+    }
+
+    .btn-primary:hover:before {
+        width: 300%;
+        height: 300%;
+        opacity: 1;
+    }
+
+    .custom-button-container a {
+        display: inline-block;
+        font-size: 18px;
+        font-weight: bold;
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 12px 20px;
+        border-radius: 4px;
+        color: #fff;
+        text-decoration: none;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .btn-animated { /* style pour le bouton "Créer un projet" au survol et au clic */
+        position: relative;
+        animation: moveInBottom 0.5s ease-out 0.75s forwards;
+    }
+
+    @keyframes moveInBottom { /* animation pour le bouton "Créer un projet" au survol */
+        0% {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Fin style pour le bouton "Créer un projet" au survol et au clic */
+
+
+    .username { /* style pour le nom d'utilisateur */
+        font-weight: bold;
+        font-style: italic;
+    }
+
+
+    .navbar { /* style pour la navbar */
+        list-style: none;
+        background-color: #fff;
+        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-item { /* style pour la navbar */
+        display: inline-block;
+        align-items: center;
+        list-style: none;
+        margin-right: 10px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .nav-item:hover { /* style pour la navbar au survol */
+        box-shadow: 0px 0px 20px rgba(173, 216, 230, 0.5);
+    }
+
+    .nav-item a { /* style pour la navbar */
+        text-decoration: none;
+        color: #000;
+    }
+
+    .username { /* style pour le nom d'utilisateur */
+        font-weight: bold;
+        font-style: italic;
+    }
+
+    .navbar { /* style pour la navbar */
+        list-style: none;
+        background-color: #fff;
+        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-item { /* style pour la navbar */
+        display: inline-block;
+        align-items: center;
+        list-style: none;
+        margin-right: 10px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .nav-item:hover { /* style pour la navbar au survol */
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Pour que ça soit plus beau */
+
+    .badge { /* Pour mettre des badges */
+        display: inline-block;
+        padding: 0.25em 0.4em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.25rem;
+    }
+
+    .bg-info { /* Pour mettre un background bleu clair */
+        background-color: #d1ecf1;
+    }
+
+    .bg-warning { /* Pour mettre un background jaune */
+        background-color: #fff3cd;
+    }
+
+    .text-dark { /* Pour mettre du texte foncé */
+        color: #343a40;
+    }
+
+    .bg-danger { /* Pour mettre un background rouge */
+        background-color: #f8d7da;
+    }
+
+    .bg-success { /* Pour mettre un background vert */
+        background-color: #d4edda;
+    }
+
+    .bg-blue { /* Pour mettre un background bleu */
+        background-color: #007bff;
+    }
+
+    .text-white { /* Pour mettre du texte blanc */
+        color: #fff;
+    }
+
+    .col { /* Pour mettre les colonnes en ligne */
+        display: inline-block;
+        width: 100%;
+        padding: 0 15px;
+        box-sizing: border-box;
+    }
+
+    .row { /* Pour mettre les colonnes en ligne */
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    .table { /* Pour mettre un style à la table */
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+    }
+
+    .mb-5 { /* Pour mettre un margin-bottom de 3rem */
+        margin-bottom: 3rem;
+    }
+
+    .container { /* Pour centrer le contenu */
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .mt-5 { /* Pour mettre un margin-top de 3rem */
+        margin-top: 3rem;
+    }
+
+    .text-center { /* Pour centrer le texte */
+        text-align: center;
+    }
+
+</style>
+<body>
+{% if user.is_authenticated %} <!-- Si l'utilisateur est authentifié -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light"> <!-- Navbar -->
+    <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Tableau de bord</a></li>
+        <!-- Lien vers la page de tableau de bord -->
+        <li class="nav-item"><a class="nav-link" href="{% url 'project_list' %}">Projets</a></li>
+        <!-- Lien vers la page de projets -->
+        <li class="nav-item"><a class="nav-link" href="{% url 'task_list' %}">Tâches</a></li>
+        <!-- Lien vers la page de tâches -->
+
+        <li class="nav-item {% if request.path == '/calendar/' %}active{%endif%}">
+            <!-- Si on est sur la page du calendrier, le lien est en gras -->
+            <a class="nav-link" href="{% url 'calendar' %}"> <!-- Lien vers la page du calendrier -->
+                <i class="fa fa-calendar-alt">Calendrier</i>
+            </a>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'all_notifications' %}">Notifications ({{
+            <!-- Lien vers la page de notifications -->
+            request.user.notifications.unread.count }})</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Déconnexion</a></li>
+        <!-- Lien vers la page de déconnexion -->
+        <li class="nav-item"><a class="nav-link username" href="{% url 'profile' %}">{{ user.username }}</a></li>
+        <!-- Affiche le nom d'utilisateur -->
+    </ul>
+</nav>
+{% else %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark"> <!-- Barre de navigation -->
+    <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Connexion</a></li>
+        <!-- Lien vers la page de connexion -->
+        <li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">Inscription</a></li>
+        <!-- Lien vers la page d'inscription -->
+    </ul>
+</nav>
+{% endif %}
+<div class="container-fluid"> <!-- Conteneur principal -->
+    {% block content %} <!-- Contenu de la page -->
+    {% endblock %}
+    <div id="calendar"></div> <!-- Calendrier -->
+</div>
+{% block scripts %}
+<script>
+    $(document).ready(function () { // wait until the DOM
+        $('#calendar').fullCalendar({ // Crée une instance de FullCalendar
+            events: '/calendar_view/', // Récupère les événements depuis l'API
+            header: { // Affiche les boutons de navigation
+                left: 'prev,next today', // Précédent, Suivant, Aujourd'hui
+                center: 'title', // Titre
+                right: 'month,agendaWeek,agendaDay' // Mois, Semaine, Jour
+            },
+            eventRender: function (event, element) {//ajout d'une classe css en fonction du type d'événement
+                element.addClass('fc-' + event.type);
+            }
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () { // wait until the DOM
+        // page is now ready, initialize the calendar...
+        var calendarEl = document.getElementById('calendar'); // Récupère l'élément HTML qui contiendra le calendrier
+        var calendar = new FullCalendar.Calendar(calendarEl, { // Crée une instance de FullCalendar
+            initialView: 'dayGridMonth', // Affiche le calendrier en mode mois
+            events: '{% url "event_api" %}', // Récupère les événements depuis l'API
+        });
+        calendar.render(); // Affiche le calendrier
+    });
+</script>
+{% endblock %}
+</body>
+</html>

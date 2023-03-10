@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Sign up</h2> <!-- Titre de la page -->
+<form method="post"> <!-- Formulaire d'inscription -->
+    {% csrf_token %} <!-- Token de sécurité -->
+    {{ form.as_p }} <!-- Affichage du formulaire -->
+    <button type="submit">Sign up</button> <!-- Bouton d'inscription -->
+</form>
+{% endblock %}

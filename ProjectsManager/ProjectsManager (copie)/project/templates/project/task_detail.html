@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Class container-fluid */
+    .container-fluid {
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Class row */
+    .row {
+        margin: 0;
+    }
+
+    /* Class col-md-12 */
+    .col-md-12 {
+        padding: 0;
+    }
+
+    /* Class mb-4 */
+    .mb-4 {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Class d-flex, justify-content-between, align-items-center */
+    .d-flex {
+        display: flex;
+    }
+
+    .justify-content-between {
+        justify-content: space-between;
+    }
+
+    .align-items-center {
+        align-items: center;
+    }
+
+    /* Class m-0 */
+    .m-0 {
+        margin: 0;
+    }
+
+    /* Class btn, btn-primary */
+    .btn {
+        display: inline-block;
+        font-weight: 400;
+        color: #212529;
+        text-align: center;
+        vertical-align: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background-color: transparent;
+        border: 1px solid transparent;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        color: #fff;
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+
+    .btn-primary:focus, .btn-primary.focus {
+        box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
+    }
+
+    .btn-primary.disabled, .btn-primary:disabled {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,
+    .show > .btn-primary.dropdown-toggle {
+        color: #fff;
+        background-color: #0062cc;
+        border-color: #005cbf;
+    }
+
+    /* Class card */
+    .card {
+        margin-bottom: 1.5rem;
+        background-color: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
+    }
+
+    /* Class card-body */
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    /* Class card-text */
+    .card-text {
+        margin-bottom: 0;
+    }
+
+    /* Class row, col-sm-6, mb-2 */
+    .row {
+        margin: 0;
+    }
+
+    .col-sm-6 {
+        position: relative;
+        width: 100%;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .mb-2 {
+        margin-bottom: 0.5rem;
+    }
+
+    /* Class small, text-muted */
+    .small {
+        font-size: 80%;
+        font-weight: 400;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+</style>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mb-4">{{ task.name }}</h1>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="m-0">Tâche</h4>
+                <a href="{% url 'task_update' task_id=task.pk %}" class="btn btn-primary">Modifier</a>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-text">{{ task.description }}</p>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p class="mb-2">Assignée à : {{ task.assigned_to }}</p>
+                            <p class="mb-2">Priorité : {{ task.priority }}</p>
+                            <p class="mb-2">État : {{ task.status }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="mb-2">Date de début : {{ task.start_date }}</p>
+                            <p class="mb-2">Date de fin : {{ task.end_date }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <h5 class="mb-2">Commentaires</h5>
+                    {% if task.comments %}
+                    {% for comment in task.comments.all %}
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <p class="card-text">{{ comment.text }}</p>
+                            <p class="card-text small text-muted">Publié le {{ comment.created_at|date:"d/m/Y H:i"
+                                }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p class="card-text">Aucun commentaire pour cette tâche.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
