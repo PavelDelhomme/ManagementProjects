@@ -1,24 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <h1>{{ object.name }}</h1>
-        <p>{{ object.description }}</p>
-        <p>Assignée à : {{ object.assigned_to }}</p>
-        <p>Priorité : {{ object.priority }}</p>
-        <p>État : {{ object.status }}</p>
-        <p>Date de début : {{ object.start_date }}</p>
-        <p>Date de fin : {{ object.end_date }}</p>
-        <hr>
-        <h2>Commentaires</h2>
-        {% if object.comments %}
-          <p>{{ object.comments }}</p>
-        {% else %}
-          <p>Aucun commentaire pour cette tâche.</p>
-        {% endif %}
-      </div>
+<div class="container-fluid"> <!-- container -->
+    <div class="row"> <!-- row -->
+        <div class="col-md-12"> <!-- col -->
+            <h1>{{ object.name }}</h1> <!-- titre -->
+            <p>{{ object.description }}</p> <!-- description -->
+            <p>Assignée à : {{ object.assigned_to }}</p> <!-- assignée à -->
+            <p>Priorité : {{ object.priority }}</p> <!-- priorité -->
+            <p>État : {{ object.status }}</p> <!-- état -->
+            <p>Date de début : {{ object.start_date }}</p> <!-- date de début -->
+            <p>Date de fin : {{ object.end_date }}</p> <!-- date de fin -->
+            <hr> <!-- séparateur -->
+            <h2>Commentaires</h2> <!-- commentaires -->
+            {% if object.comments %} <!-- si il y a des commentaires -->
+            <p>{{ object.comments }}</p> <!-- commentaires -->
+            {% else %} <!-- sinon -->
+            <p>Aucun commentaire pour cette tâche.</p> <!-- message -->
+            {% endif %} <!-- fin de la condition -->
+        </div>
     </div>
-  </div>
+</div>
 {% endblock %}

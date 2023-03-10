@@ -3,7 +3,7 @@
 {% block content %}
 <style type="text/css">
 
-    .container-fluid {
+    .container-fluid { /* container */
         width: 100%;
         padding-right: 15px;
         padding-left: 15px;
@@ -11,11 +11,11 @@
         margin-left: auto;
     }
 
-    .st0 {
+    .st0 { /* logo */
         fill: #0071C5;
     }
 
-    .st1 {
+    .st1 { /* logo */
         fill: #FFFFFF;
     }
 
@@ -74,7 +74,7 @@
 </style>
 <div class="container">
     <div class="content">
-        <div class="row justify-content-center align-items-center vh-100 text-center">
+        <div class="row justify-content-center align-items-center vh-100 text-center"> <!-- logo -->
             <div class="col-lg-6 col-md-8 col-10">
                 <svg version="1.1" id="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 
@@ -89,9 +89,9 @@
                         C361,319,313.9,366.1,256,366.1z"/>
                     </g>
                 </svg>
-                <h1 class="text-center my-5">Bienvenue sur ProjectManager !</h1>
+                <h1 class="text-center my-5">Bienvenue sur ProjectManager !</h1> <!-- titre -->
                 <div class="d-grid gap-3">
-                    <a href="{% url 'project_create' %}" class="btn btn-primary btn-lg">Créer un projet</a>
+                    <a href="{% url 'project_create' %}" class="btn btn-primary btn-lg">Créer un projet</a> <!-- bouton de création de projet -->
                 </div>
             </div>
         </div>

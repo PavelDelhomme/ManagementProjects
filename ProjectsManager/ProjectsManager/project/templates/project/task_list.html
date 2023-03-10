@@ -79,46 +79,69 @@
     }
 </style>
 
-<div class="container mt-5">
-    <h1 class="mb-5">Liste des tâches</h1>
-    <table class="table">
-        <thead class="bg-blue text-white">
-        <tr>
-            <th scope="col" class="">#</th>
-            <th scope="col" class="">Name</th>
-            <th scope="col" class="">Description</th>
-            <th scope="col" class="">Assigned To</th>
-            <th scope="col" class="">Project</th>
-            <th scope="col" class="">Start Date</th>
-            <th scope="col" class="">End Date</th>
-            <th scope="col" class="">Status</th>
+<div class="container mt-5"> <!-- container -->
+    <h1 class="mb-5">Liste des tâches</h1> <!-- titre de la page -->
+    <table class="table"> <!-- tableau des tâches -->
+        <thead class="bg-blue text-white"> <!-- en-tête du tableau des tâches -->
+        <tr> <!-- ligne du tableau -->
+            <th scope="col" class="">#</th> <!-- colonne id -->
+            <!-- colonne id -->
+            <th scope="col" class="">Name</th> <!-- colonne nom de la tâche -->
+            <!-- colonne nom de la tâche -->
+            <th scope="col" class="">Description</th> <!-- colonne description de la tâche -->
+            <!-- colonne description de la tâche -->
+            <th scope="col" class="">Assigned To</th> <!-- colonne utilisateur assigné à la tâche -->
+            <!-- colonne utilisateur assigné à la tâche -->
+            <th scope="col" class="">Project</th> <!-- colonne projet associé à la tâche -->
+            <!-- colonne projet associé à la tâche -->
+            <th scope="col" class="">Start Date</th> <!-- colonne date de début de la tâche -->
+            <!-- colonne date de début de la tâche -->
+            <th scope="col" class="">End Date</th> <!-- colonne date de fin de la tâche -->
+            <!-- colonne date de fin de la tâche -->
+            <th scope="col" class="">Status</th> <!-- colonne état de la tâche -->
         </tr>
         </thead>
-        <tbody>
-        {% for task in object_list %}
-        <tr>
+        <!-- fin de l'en-tête du tableau -->
+        <tbody> <!-- corps du tableau -->
+        {% for task in object_list %} <!-- boucle sur les tâches -->
+        <tr> <!-- ligne du tableau -->
             <th scope="row">{{ task.id }}</th>
+            <!-- id de la tâche -->
             <td>{{ task.name }}</td>
+            <!-- nom de la tâche -->
             <td>{{ task.description }}</td>
-            {% if task.assigned_to %}
+            <!-- description de la tâche -->
+            {% if task.assigned_to %} <!--si la tâche est assignée à un utilisateur -->
             <td>{{ task.assigned_to }}</td>
-            {% else %}
+            <!--utilisateur assigné à la tâche -->
+            {% else %} <!--sinon -->
             <td><a href="{% url 'task_update' task.pk">Ajouter un utilisateur</a></td>
-            {% endif %}
+            <!--lien pour ajouter un utilisateur -->
+            {% endif %} <!--fin de la condition -->
             <td><a href="{% url 'project_detail' task.project.pk %}">{{ task.project.name }}</a></td>
+            <!--projet associé à la tâche -->
             <td>{{ task.start_date|date:"d/m/Y" }}</td>
+            <!--date de début de la tâche -->
             <td>{{ task.end_date|date:"d/m/Y" }}</td>
-            <td>{% if task.status == "NEW" %}
-                <span class="badge bg-primary">{{ task.get_status_display }}</span>
-                {% elif task.status == "IN PROGRESS" %}
-                <span class="badge bg-warning text-dark">{{ task.get_status_display }}</span>
-                {% elif task.status == "COMPLETED" %}
-                <span class="badge bg-success">{{ task.get_status_display }}</span>
-                {% endif %}
+            <!--date de fin de la tâche -->
+            <td>{% if task.status == "NEW" %} <!--état de la tâche-->
+                <span class="badge bg-primary">{{ task.get_status_display }}</span> <!--affichage de l'état de la tâche-->
+                {% elif task.status == "IN PROGRESS" %} <!--si l'état de la tâche est "En cours"
+                <span class="badge bg-warning text-dark">{{ task.get_status_display }}</span> <!--affichage de l'état de
+                la tâche-->
+                {% elif task.status == "COMPLETED" %} <!-- si l'état de la tâche est "Terminée" -->
+                <span class="badge bg-success">{{ task.get_status_display }}</span> <!--affichage de l'état de la tâche-->
+                {% elif task.status == "CANCELED" %} <!-- si l'état de la tâche est "Annulée" -->
+                <span class="badge bg-danger">{{ task.get_status_display }}</span> <!--affichage de l'état de la tâche-->
+                {% endif %} <!-- fin de la condition-->
             </td>
+            <!-- fin de la colonne état de la tâche-->
         </tr>
-        {% endfor %}
+        <!-- fin de la ligne du tableau -->
+        {% endfor %} <!--fin de la boucle sur les tâches-->
         </tbody>
+        <!--fin du corps du tableau
     </table>
-</div>
+    <!--fin du tableau des tâches
+</div> <!--fin du container
 {% endblock %}

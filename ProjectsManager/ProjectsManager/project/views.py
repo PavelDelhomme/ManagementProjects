@@ -9,167 +9,199 @@ from django.urls import reverse_lazy
 from django.http import JsonResponse
 from .models import Project, Task, Event
 from .forms import ProjectForm, TaskForm
-
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 
 class HomePageView(TemplateView):
-    template_name = 'home.html'
+    template_name = 'home.html'  # Le template qui va etre affiche dans la page home
 
 
 class ProjectListView(ListView):
-    model = Project
-    template_name = 'project/project_list.html'
-    ordering = ['-start_date']
+    """
+    Lister tous les projets
+    """
+    model = Project  # Le model sur lequel on va travailler
+    template_name = 'project/project_list.html'  # Le template qui va etre affiche dans la page project_list
+    ordering = ['-start_date']  # L'ordre dans lequel on va afficher les projets
 
-    def get_queryset(self):
-        return Project.objects.all()
-        # return Project.objects.filter(assigned_to=self.request.user)
+    def get_queryset(self):  # La methode qui va retourner tous les projets
+        """
+        Retourne tous les projets
+        :return:
+        """
+        return Project.objects.all()  # Retourne tous les projets
+        # return Project.objects.filter(assigned_to=self.request.user) # Retourne tous les projets assignes a l'utilisateur connecte
 
 
 class ProjectCreateView(CreateView):
-    model = Project
-    template_name = 'project/project_create.html'
-    fields = ['name', 'description', 'assigned_to', 'start_date', 'end_date']
-    success_url = reverse_lazy('project_list_by_start_date')
+    """
+    Creer un nouveau projet
+    """
+    model = Project  # Le model sur lequel on va travailler
+    template_name = 'project/project_create.html'  # Le template qui va etre affiche dans la page project_create
+    fields = ['name', 'description', 'assigned_to', 'start_date',
+              'end_date']  # Les champs du model sur lesquels on va travailler
+    success_url = reverse_lazy(
+        'project_list_by_start_date')  # La page sur laquelle on va etre redirige apres la creation du projet
 
     def form_valid(self, form):
-        form.instance.created_by = self.request.user
-        return super().form_valid(form)
+        """
+        Methode qui va permettre de creer un nouveau projet
+        :param form:
+        :return:
+        """
+        form.instance.created_by = self.request.user  # On recupere l'utilisateur connecte
+        return super().form_valid(form)  # On retourne la methode form_valid de la classe CreateView
 
     def get_success_url(self):
-        return reverse_lazy('project_detail', kwargs={'pk': self.object.pk})
+        """
+        Methode qui va permettre de rediriger l'utilisateur apres la creation du projet
+        :return:
+        """
+        return reverse_lazy('project_detail', kwargs={'pk': self.object.pk})  # On retourne la page project_detail
 
 
 class TaskCreateView(CreateView):
-    model = Task
-    form_class = TaskForm
-    template_name = 'project/task_create.html'
-    success_url = reverse_lazy('project_list')
+    """
+    Creer une nouvelle tache
+    """
+    model = Task  # Le model sur lequel on va travailler
+    form_class = TaskForm  # Le formulaire sur lequel on va travailler
+    template_name = 'project/task_create.html'  # Le template qui va etre affiche dans la page task_create
+    success_url = reverse_lazy('project_list')  # La page sur laquelle on va etre redirige apres la creation de la tache
 
     # def get_initial(self):
     #    project = get_object_or_404(Project, pk=self.kwargs['project_id'])
     #    return {'project': project}
 
     def form_valid(self, form):
-        project = get_object_or_404(Project, id=self.kwargs['project_id'])
-        form.instance.created_by = self.request.user
-        # form.instance.project_id = get_object_or_404(Project, pk=self.kwargs['project_id'])
-        form.instance.project = project
-        print(form.instance.project)  # <Project: Project 1>
-        return super().form_valid(form)
+        """
+        Methode qui va permettre de creer une nouvelle tache
+        :param form:
+        :return:
+        """
+        project = get_object_or_404(Project,
+                                    id=self.kwargs['project_id'])  # On recupere le projet sur lequel on va travailler
+        form.instance.created_by = self.request.user  # On recupere l'utilisateur connecte
+        # form.instance.project_id = get_object_or_404(Project, pk=self.kwargs['project_id']) # On recupere le projet sur lequel on va travailler
+        form.instance.project = project  # On recupere le projet sur lequel on va travailler
+        print(form.instance.project)  # <Project: Project 1> # On affiche le projet sur lequel on va travailler
+        return super().form_valid(form)  # On retourne la methode form_valid de la classe CreateView
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['project'] = ProjectForm()
-        return context
+        """
+        Methode qui va permettre de recuperer le projet sur lequel on va travailler
+        :param kwargs:
+        :return:
+        """
+        context = super().get_context_data(**kwargs)  # On recupere le contexte
+        context['project'] = ProjectForm()  # On recupere le projet sur lequel on va travailler
+        return context  # On retourne le contexte
 
 
 class TaskListView(ListView):
-    model = Task
-    template_name = 'project/task_list.html'
-    # ordering = ['-start_date']
-    ordering = ['-status', '-priority', '-start_date']
+    """
+    Lister toutes les taches
+    """
+    model = Task  # Le model sur lequel on va travailler
+    template_name = 'project/task_list.html'  # Le template qui va etre affiche dans la page task_list
+    # ordering = ['-start_date'] # L'ordre dans lequel on va afficher les taches
+    ordering = ['-status', '-priority', '-start_date']  # L'ordre dans lequel on va afficher les taches
 
 
 class TaskDetailView(ListView):
-    model = Task
-    template_name = 'project/task_detail.html'
+    """
+    Afficher les details d'une tache
+    """
+    model = Task  # Le model sur lequel on va travailler
+    template_name = 'project/task_detail.html'  # Le template qui va etre affiche dans la page task_detail
 
 
 class TaskUpdateView(UpdateView):
-    model = Task
-    form_class = TaskForm
-    template_name = 'project/task_update.html'
+    """
+    Mettre a jour une tache
+    """
+    model = Task  # Le model sur lequel on va travailler
+    form_class = TaskForm  # Le formulaire sur lequel on va travailler
+    template_name = 'project/task_update.html'  # Le template qui va etre affiche dans la page task_update
 
     # success_url = reverse_lazy('project_list')
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['project'] = ProjectForm()
-        return context
+        """
+        Methode qui va permettre de recuperer le projet sur lequel on va travailler
+        :param kwargs:
+        :return:
+        """
+        context = super().get_context_data(**kwargs)  # On recupere le contexte
+        context['project'] = ProjectForm()  # On recupere le projet sur lequel on va travailler
+        return context  # On retourne le contexte
 
     def form_valid(self, form):
-        form.instance.modified_by = self.request.user
-        return super().form_valid(form)
+        """
+        Methode qui va permettre de mettre a jour une tache
+        :param form:
+        :return:
+        """
+        form.instance.modified_by = self.request.user  # On recupere l'utilisateur connecte
+        return super().form_valid(form)  # On retourne la methode form_valid de la classe UpdateView
 
     def get_success_url(self):
-        return reverse_lazy('task_detail', kwargs={'pk': self.object.pk})
+        """
+        Methode qui va permettre de rediriger l'utilisateur apres la mise a jour de la tache
+        :return:
+        """
+        return reverse_lazy('task_detail', kwargs={'pk': self.object.pk})  # On retourne la page task_detail
 
 
-def calendar(request):
-    projects = Project.objects.all()
-    tasks = Task.objects.all()
-    context = {
-        'projects': projects,
-        'tasks': tasks,
-    }
-    return render(request, 'project/calendar.html', context)
-
-
-def calendar_view(request):
-    # Récupérer toutes les tâches et tous les projets
-    tasks = Task.objects.all()
-    projects = Project.objects.all()
-
-    # Liste des événements à afficher sur le calendrier
-    events = []
-
-    # Parcourir toutes les tâches pour créer des événements correspondants
-    for task in tasks:
-        events.append({
-            'title': task.name,
-            'start': task.start_date.isoformat(),
-            'end': task.end_date.isoformat(),
-            'type': 'task'
-        })
-
-    # Parcourir tous les projets pour créer des événements correspondants
-    for project in projects:
-        events.append({
-            'title': project.name,
-            'start': project.start_date.isoformat(),
-            'end': project.end_date.isoformat(),
-            'type': 'project'
-        })
-
-    # Tri des événements par date de début
-    events = sorted(events, key=lambda e: e['start'])
-
-    # Ajout d'une couleur pour chaque type d'événement
-    colors = {'project': '#007bff', 'task': '#28a745'}
-    for event in events:
-        event['color'] = colors.get(event['type'])
-
-    # Rendu du template
-    context = {'events': events}
-    return render(request, 'project/calendar.html', context)
-
-
-@login_required
+@login_required  # On demande a l'utilisateur d'etre connecte
 def add_task_comment(request, pk):
-    task = get_object_or_404(Task, pk=pk)
-    if request.method == 'POST':
-        task.comments = request.POST['comments']
-        task.save()
+    """
+    Ajouter un commentaire a une tache
+    :param request:
+    :param pk:
+    :return:
+    """
+    task = get_object_or_404(Task, pk=pk)  # On recupere la tache sur laquelle on va travailler
+    if request.method == 'POST':  # Si la methode est POST
+        task.comments = request.POST['comments']  # On recupere les commentaires
+        task.save()  # On sauvegarde les commentaires
     context = {
-        'task': task,
+        'task': task,  # On recupere la tache sur laquelle on va travailler
     }
-    return render(request, 'project/task_detail.html', context)
+    return render(request, 'project/task_detail.html',
+                  context)  # On retourne le template task_detail.html avec le contexte
 
 
 class SignUpView(CreateView):
-    form_class = UserCreationForm
-    success_url = reverse_lazy('login')
-    template_name = 'signup.html'
+    """
+    Inscription d'un utilisateur
+    """
+    form_class = UserCreationForm  # Le formulaire sur lequel on va travailler
+    success_url = reverse_lazy('login')  # La page de redirection apres l'inscription
+    template_name = 'signup.html'  # Le template qui va etre affiche dans la page signup
 
 
 @login_required
 def all_notifications(request):
+    """
+    Afficher toutes les notifications
+    :param request:
+    :return:
+    """
     return render(request, 'all_notifications.html')
 
 
 def project_detail(request, pk):
-    project = get_object_or_404(Project, pk=pk)
-    tasks = Task.objects.filter(project=project)
+    """
+    Afficher les details d'un projet
+    :param request:
+    :param pk:
+    :return:
+    """
+    project = get_object_or_404(Project, pk=pk)  # On recupere le projet sur lequel on va travailler
+    tasks = Task.objects.filter(project=project)  # On recupere toutes les taches du projet
     context = {
         'project': project,
         'tasks': tasks,
@@ -177,64 +209,69 @@ def project_detail(request, pk):
     return render(request, 'project/project_detail.html', context)
 
 
-def calendar_view(request):
-    events = Event.objects.all()
-    event_list = []
-    for event in events:
-        event_list.append({
-            'title': event.title,
-            'start': event.start_date,
-            'end': event.end_date,
-        })
-    return render(request, 'project/calendar.html', {'events': event_list})
-
-
-def get_calendar_events():
-    projects = Project.objects.all()
-    tasks = Task.objects.all()
-    rows = []
-    for project in projects:
-        row = []
-        row.append('<td class="project">' + project.name + '</td>')
-        row.append('<td class="project-start">' + str(project.start_date) + '</td>')
-        row.append('<td class="project-end">' + str(project.end_date) + '</td>')
-        row.append('<td class="project-type">Projet</td>')
-        rows.append('<tr>' + ''.join(row) + '</tr>')
-
+@login_required
+def calendar(request):
+    """
+    Show calendar
+    """
+    projects = Project.objects.filter(assigned_to=request.user).distinct()
+    tasks = Task.objects.filter(assigned_to=request.user).distinct()
+    events = []
     for task in tasks:
-        row = []
-        row.append('<td class="task">' + task.name + '</td>')
-        row.append('<td class="task-start">' + str(task.start_date) + '</td>')
-        row.append('<td class="task-end">' + str(task.end_date) + '</td>')
-        row.append('<td class="task-type">Tâche</td>')
-        rows.append('<tr>' + ''.join(row) + '</tr>')
+        event = {
+            'title': task.name,
+            'start': task.start_date,
+            'end': task.end_date,
+            'url': reverse_lazy('task_detail', kwargs={'pk': task.pk}),
+            'color': 'red' if task.status == 'incomplete' else 'green',
+        }
+        events.append(event)
+    return render(request, 'project/calendar.html', {'events': events})
 
-    return '\n'.join(rows)
 
 
+@csrf_exempt
 def event_api(request):
-    event_list = get_calendar_events()
-    context = {'event_list': event_list}
-    return render(request, 'project/calendar.html', context)
+    events = []
+    for task in Task.objects.all():
+        event = {
+            'title': task.name,
+            'start': task.start_date.isoformat(),
+            'end': task.end_date.isoformat(),
+            'url': reverse_lazy('task_detail', kwargs={'pk': task.pk}),
+            'color': 'red' if task.status == 'incomplete' else 'green',
+        }
+        events.append(event)
+
+    return JsonResponse(events, safe=False)
+
+
 
 
 @login_required
 def profile(request):
-    if request.method == 'POST':
-        user_form = UserChangeForm(request.POST, instance=request.user)
-        password_form = PasswordChangeForm(request.user, request.POST)
+    """
+    Afficher le profil de l'utilisateur
+    :param request:
+    :return:
+    """
+    if request.method == 'POST':  # Si la methode est POST
+        user_form = UserChangeForm(request.POST,
+                                   instance=request.user)  # On recupere le formulaire de modification de l'utilisateur
+        password_form = PasswordChangeForm(request.user,
+                                           request.POST)  # On recupere le formulaire de modification du mot de passe
 
-        if user_form.is_valid() and password_form.is_valid():
-            user = user_form.save()
-            update_session_auth_hash(request, user)
-            password_form.save()
-            return redirect('profile')
-    else:
-        user_form = UserChangeForm(instance=request.user)
-        password_form = PasswordChangeForm(request.user)
+        if user_form.is_valid() and password_form.is_valid():  # Si les deux formulaires sont valides
+            user = user_form.save()  # On sauvegarde les modifications de l'utilisateur
+            update_session_auth_hash(request, user)  # On met a jour la session
+            password_form.save()  # On sauvegarde les modifications du mot de passe
+            return redirect('profile')  # On redirige vers la page profile
+    else:  # Sinon on affiche le formulaire de modification de l'utilisateur et le formulaire de modification du mot de passe vide
+        user_form = UserChangeForm(instance=request.user)  # On recupere le formulaire de modification de l'utilisateur
+        password_form = PasswordChangeForm(request.user)  # On recupere le formulaire de modification du mot de passe
 
-    context = {
-        'user_form': user_form,
-        'password_form': password_form,
+    context = {  # On recupere le contexte
+        'user_form': user_form,  # On recupere le formulaire de modification de l'utilisateur
+        'password_form': password_form,  # On recupere le formulaire de modification du mot de passe
     }
-    return render(request, 'profile.html', context)
+    return render(request, 'profile.html', context)  # On retourne le template profile.html avec le contexte

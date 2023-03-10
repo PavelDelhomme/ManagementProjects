@@ -1,22 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>{{ project.name }}</h1>
-  <p>{{ project.description }}</p>
-  <p>Début : {{ project.start_date }}</p>
-  <p>Fin : {{ project.end_date }}</p>
-  
-  <h2>Tâches du projet :</h2>
-  <ul>
-    {% for task in project.tasks.all %}
-      <li><a href="{% url 'task_detail' task.pk %}">{{ task.name }}</a></li>
-    {% empty %}
-      <li>Aucune tâche pour le moment.</li>
-    {% endfor %}
-  </ul>
+<h1>{{ project.name }}</h1> <!-- titre -->
+<p>{{ project.description }}</p> <!-- description -->
+<p>Début : {{ project.start_date }}</p> <!-- date de début -->
+<p>Fin : {{ project.end_date }}</p> <!-- date de fin -->
 
-    <a href="{% url 'task_create' project_id=project.pk %}" class="btn btn-primary">Créer une tâche</a>
+<h2>Tâches du projet :</h2> <!-- tâches -->
+<ul> <!-- liste des tâches -->
+    {% for task in project.tasks.all %} <!-- boucle sur les tâches -->
+    <li><a href="{% url 'task_detail' task.pk %}">{{ task.name }}</a></li> <!-- lien vers la tâche -->
+    {% empty %} <!-- si aucune tâche -->
+    <li>Aucune tâche pour le moment.</li> <!-- message -->
+    {% endfor %} <!-- fin de la boucle -->
+</ul>
 
-  <h2>Commentaires :</h2>
-  <p>{{ project.comments }}</p>
+<a href="{% url 'task_create' project_id=project.pk %}" class="btn btn-primary">Créer une
+    tâche</a> <!-- bouton pour créer une tâche -->
+
+<h2>Commentaires :</h2> <!-- commentaires -->
+<p>{{ project.comments }}</p> <!-- commentaires -->
 {% endblock %}

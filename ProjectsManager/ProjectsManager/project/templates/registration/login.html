@@ -3,9 +3,35 @@
 {% block title %}Connexion{% endblock %}
 
 {% block content %}
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Se connecter</button>
-    </form>
+<div class="container mt-5"> <!-- container -->
+    <div class="row justify-content-center"> <!-- row -->
+        <div class="col-md-6 col-lg-5"> <!-- col -->
+            <div class="card shadow-lg"> <!-- card -->
+                <div class="card-body p-4"> <!-- card-body -->
+                    <h1 class="h4 mb-4">Connexion</h1> <!-- titre -->
+                    <form method="post"> <!-- formulaire -->
+                        {% csrf_token %} <!-- token -->
+                        {% if form.errors %} <!-- affichage des erreurs -->
+                            <div class="alert alert-danger" role="alert"> <!-- alerte -->
+                                Votre nom d'utilisateur ou votre mot de passe est incorrect. <!-- message -->
+                            </div> <!-- alerte -->
+                        {% endif %} <!-- affichage des erreurs -->
+                        {% if next %} <!-- redirection -->
+                            <input type="hidden" name="next" value="{{ next }}" /> <!-- champ caché -->
+                        {% endif %} <!-- redirection -->
+                        <div class="form-group"> <!-- champ -->
+                            <label for="{{ form.username.id_for_label }}">Nom d'utilisateur</label> <!-- label -->
+                            {{ form.username }} <!-- champ -->
+                        </div> <!-- champ -->
+                        <div class="form-group"> <!-- champ -->
+                            <label for="{{ form.password.id_for_label }}">Mot de passe</label> <!-- label -->
+                            {{ form.password }} <!-- champ -->
+                        </div> <!-- champ -->
+                        <button class="btn btn-primary btn-block" type="submit">Se connecter</button> <!-- bouton -->
+                    </form> <!-- formulaire -->
+                </div> <!-- card-body -->
+            </div> <!-- card -->
+        </div> <!-- col -->
+    </div> <!-- row -->
+</div> <!-- container -->
 {% endblock %}

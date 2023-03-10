@@ -22,23 +22,22 @@ from django.contrib.auth.views import LoginView
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 
-
-
-
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', HomePageView.as_view(), name='home'),
-    path('login/',  auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('admin/', admin.site.urls),  # Admin site URL (admin/)
+    path('', HomePageView.as_view(), name='home'),  # Home page URL (home/)
+    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),  # Login page URL (login/)
     path('logout/', auth_views.LogoutView.as_view(template_name='logout.html', next_page="login"), name='logout'),
-    path('', include('project.urls')),
-    path('', include('users.urls')),
+    # Logout page URL (logout/)
+    path('', include('project.urls')),  # Project app URL (project/)
+    path('', include('users.urls')),  # Users app URL (users/)
 
-    # Autres vues
-    path('login/',  auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    # Autres vues de l'application
+    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),  # Login page URL (login/)
     path('logout/', auth_views.LogoutView.as_view(template_name='logout.html', next_page="login"), name='logout'),
-    path('', include('project.urls')),
-    path('signup/', SignUpView.as_view(), name='signup'),
-    path('users/', include('users.urls')),
+    # Logout page URL (logout/)
+    path('', include('project.urls')),  # Project app URL (project/)
+    path('signup/', SignUpView.as_view(), name='signup'),  # Signup page URL (signup/)
+    path('users/', include('users.urls')),  # Users app URL (users/)
 
-    path('', HomePageView.as_view(), name='dashboard'),
+    path('', HomePageView.as_view(), name='dashboard'),  # Home page URL (home/)
 ]
