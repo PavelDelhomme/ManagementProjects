@@ -53,7 +53,6 @@
     }
 
 
-
     h3 { /* style pour le titre */
         margin: 0; /* marge extérieure */
     }
@@ -142,6 +141,7 @@
             transform: translateY(0);
         }
     }
+
     /* Fin style pour le bouton "Créer un projet" au survol et au clic */
 
 
@@ -173,7 +173,7 @@
     }
 
     .nav-item:hover { /* style pour la navbar au survol */
-        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+        box-shadow: 0px 0px 20px rgba(173, 216, 230, 0.5);
     }
 
     .nav-item a { /* style pour la navbar */
@@ -277,8 +277,6 @@
         margin-bottom: 3rem;
     }
 
-
-
     .container { /* Pour centrer le contenu */
         width: 100%;
         padding-right: 15px;
@@ -300,26 +298,35 @@
 {% if user.is_authenticated %} <!-- Si l'utilisateur est authentifié -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light"> <!-- Navbar -->
     <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Tableau de bord</a></li> <!-- Lien vers la page de tableau de bord -->
-        <li class="nav-item"><a class="nav-link" href="{% url 'project_list' %}">Projets</a></li> <!-- Lien vers la page de projets -->
-        <li class="nav-item"><a class="nav-link" href="{% url 'task_list' %}">Tâches</a></li> <!-- Lien vers la page de tâches -->
+        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Tableau de bord</a></li>
+        <!-- Lien vers la page de tableau de bord -->
+        <li class="nav-item"><a class="nav-link" href="{% url 'project_list' %}">Projets</a></li>
+        <!-- Lien vers la page de projets -->
+        <li class="nav-item"><a class="nav-link" href="{% url 'task_list' %}">Tâches</a></li>
+        <!-- Lien vers la page de tâches -->
 
-        <li class="nav-item {% if request.path == '/calendar/' %}active{%endif%}"> <!-- Si on est sur la page du calendrier, le lien est en gras -->
+        <li class="nav-item {% if request.path == '/calendar/' %}active{%endif%}">
+            <!-- Si on est sur la page du calendrier, le lien est en gras -->
             <a class="nav-link" href="{% url 'calendar' %}"> <!-- Lien vers la page du calendrier -->
                 <i class="fa fa-calendar-alt">Calendrier</i>
             </a>
         </li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'all_notifications' %}">Notifications ({{ <!-- Lien vers la page de notifications -->
+        <li class="nav-item"><a class="nav-link" href="{% url 'all_notifications' %}">Notifications ({{
+            <!-- Lien vers la page de notifications -->
             request.user.notifications.unread.count }})</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Déconnexion</a></li> <!-- Lien vers la page de déconnexion -->
-        <li class="nav-item"><a class="nav-link username" href="{% url 'profile' %}">{{ user.username }}</a></li> <!-- Affiche le nom d'utilisateur -->
+        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Déconnexion</a></li>
+        <!-- Lien vers la page de déconnexion -->
+        <li class="nav-item"><a class="nav-link username" href="{% url 'profile' %}">{{ user.username }}</a></li>
+        <!-- Affiche le nom d'utilisateur -->
     </ul>
 </nav>
 {% else %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark"> <!-- Barre de navigation -->
     <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Connexion</a></li> <!-- Lien vers la page de connexion -->
-        <li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">Inscription</a></li> <!-- Lien vers la page d'inscription -->
+        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Connexion</a></li>
+        <!-- Lien vers la page de connexion -->
+        <li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">Inscription</a></li>
+        <!-- Lien vers la page d'inscription -->
     </ul>
 </nav>
 {% endif %}

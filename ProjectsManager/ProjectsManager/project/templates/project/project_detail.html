@@ -125,37 +125,40 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h1>{{ project.name }}</h1> <!-- titre -->
+                    <h1>{{ project.name }}</h1>
                 </div>
                 <div class="card-body">
-                    <p>{{ project.description }}</p> <!-- description -->
-                    <p><strong>Début :</strong> {{ project.start_date }}</p> <!-- date de début -->
-                    <p><strong>Fin :</strong> {{ project.end_date }}</p> <!-- date de fin -->
+                    <p>{{ project.description }}</p>
+                    <p><strong>Début :</strong> {{ project.start_date }}</p>
+                    <p><strong>Fin :</strong> {{ project.end_date }}</p>
                     <hr>
-                    <h2>Tâches du projet :</h2> <!-- tâches -->
-                    <ul class="list-group"> <!-- liste des tâches -->
-                        {% for task in project.tasks.all %} <!-- boucle sur les tâches liées au projet -->
+                    <h2>Tâches du projet :</h2>
+                    <ul class="list-group">
+                        {% for task in project.tasks.all %}
                         <li class="list-group-item"><a
                                 href="{% url 'task_detail' project_id=project.pk task_id=task.pk %}">{{ task.name }}</a>
                         </li>
-                        <!-- lien vers la page de détail de la tâche -->
-                        {% empty %} <!-- si aucune tâche -->
-                        <li class="list-group-item">Aucune tâche pour le moment.</li> <!-- message -->
-                        {% endfor %} <!-- fin de la boucle -->
+                        {% empty %}
+                        <li class="list-group-item">Aucune tâche pour le moment.</li>
+                        {% endfor %}
                     </ul>
                     <a href="{% url 'task_create' project_id=project.pk %}" class="btn btn-primary mt-3">Créer une
                         tâche</a>
-                    <!-- bouton pour créer une tâche -->
                     <hr>
-                    <h2>Commentaires :</h2> <!-- commentaires -->
-                    <p>{{ project.comments }}</p> <!-- commentaires -->
+                    <h2>Commentaires :</h2>
+                    <p>{{ project.comments }}</p>
+                    <hr>
+                    <h2>Utilisateurs assignés au projet :</h2>
+                    <ul>
+                        {% for user in project.assigned_to.all %}
+                        <li>{{ user.username }}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
                 <div class="card-footer">
                     <a href="{% url 'project_update' project.pk %}" class="btn btn-primary">Modifier le projet</a>
-                    <!-- bouton pour modifier le projet -->
                 </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+</div>{% endblock %}

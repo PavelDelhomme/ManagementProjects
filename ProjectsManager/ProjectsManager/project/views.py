@@ -33,8 +33,9 @@ class ProjectListView(ListView):
         Retourne tous les projets
         :return:
         """
-        return Project.objects.all()  # Retourne tous les projets
-        # return Project.objects.filter(assigned_to=self.request.user) # Retourne tous les projets assignes a l'utilisateur connecte
+        # return Project.objects.all()  # Retourne tous les projets
+        return Project.objects.filter(
+            assigned_to=self.request.user)  # Retourne tous les projets assignes a l'utilisateur connecte
 
 
 class ProjectCreateView(CreateView):
@@ -122,6 +123,14 @@ class TaskListView(ListView):
     template_name = 'project/task_list.html'  # Le template qui va etre affiche dans la page task_list
     # ordering = ['-start_date'] # L'ordre dans lequel on va afficher les taches
     ordering = ['-status', '-priority', '-start_date']  # L'ordre dans lequel on va afficher les taches
+
+    def get_queryset(self):
+        """
+        Retourne toutes les taches assignees a l'utilisateur connecte
+        :return:
+        """
+        return Task.objects.filter(
+            assigned_to=self.request.user)  # Retourne toutes les taches assignees a l'utilisateur connecte
 
 
 class TaskDetailView(ListView):
