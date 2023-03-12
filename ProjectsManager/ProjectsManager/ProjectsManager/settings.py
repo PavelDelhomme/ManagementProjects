@@ -39,8 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'project.apps.ProjectConfig',
     'users.apps.UsersConfig',
+    'django_extensions',
     # 'admin_list_filter_dropdown',
     #'django-admin-list-filter-dropdown',
+
 ]
 
 MIDDLEWARE = [

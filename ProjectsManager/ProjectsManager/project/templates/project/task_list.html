@@ -1,23 +1,183 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
+{% load static %}
 {% block content %}
+{% if project %}
+<style>
+    .accordion {
+        background-color: #eee;
+        color: #444;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        text-align: left;
+        border: none;
+        outline: none;
+        transition: 0.4s;
+    }
 
+    .active, .accordion:hover {
+        background-color: #ccc;
+    }
 
-{% if tasks %}
+    .panel {
+        padding: 0 18px;
+        background-color: white;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+    }
+
+    .panel p {
+        margin: 0;
+        padding: 12px 0;
+    }
+
+    .panel ul {
+        margin-top: 0;
+        padding-left: 20px;
+    }
+
+    .panel ul li {
+        margin-bottom: 8px;
+    }
+</style>
 <h2>Tâches à faire aujourd'hui :</h2>
-<div class="list-group">
-    {% for task in tasks %}
-    <!--a href="{% url 'task_update' task.pk %}">{{ task.name }}</a-->
-    <a href="{% url 'task_update' task.pk %}" class="list-group-item list-group-item-action no-decoration">
-        <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">{{ task.name }}</h5>
-            <small>{{ task.end_date }}</small>
-        </div>
-        <p class="mb-1"> Description {{ task.description }}</p>
+<div class="accordion">
+    <h5>{{ task.name }}</h5>
+    <li class="list-group-item"><a href="{% url 'task_update' task.pk %}">{{ task.name }}</a>
+
         <small>Projet :{{ task.project.name }}</small>
-    </a>
-    <hr>
-    {% endfor %}
+        <small>Date limite : {{ task.end_date }}</small>
+        <small>Temps restant : {{ task.time_remaining }}</small>
+        <a href="{% url 'task_update' task.pk %}">
+            <div class="panel">
+                <p>{{ task.description }}</p>
+                {% if task.completed %}
+                <span>Terminée</span>
+                {% else %}
+                <form method="post" action="{% url 'mark_task_as_completed' task.project.pk task.pk %}">
+                    {% csrf_token %}
+                    <button type="submit">Marquer comme terminée</button>
+                </form>
+                <a href="{% url 'task_update' task.pk %}">
+                    <button class="btn">Modifier</button>
+                </a>
+                {% endif %}
+            </div>
+        </a>
+    </li>
 </div>
+{% endif %}
+
+{% if tasks_today %}
+<ul>
+    {% for task in tasks_today %}
+    <li>
+        <div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if tasks_later %}
+
+<h2>Tâches pour plus tard :</h2>
+<ul>
+    {% for task in tasks_later %}
+    <li>
+        <div>
+            <h5>{{ task.name }}</h5>
+            <p>{{ task.description }}</p>
+            <small>Projet :{{ task.project.name }}</small>
+            <small>Date limite : {{ task.end_date }}</small>
+            <small>Temps restant : {{ task.time_remaining }}</small>
+            {% if task.status == 'complete' %}
+            <span>Terminée</span>
+            {% elif task.status == 'incomplete' %}
+            <form method="post" action="{% url 'mark_task_as_completed' task.project.pk task.pk %}">
+                {% csrf_token %}
+                <button type="submit">Marquer comme terminée</button>
+            </form>
+            <a href="{% url 'task_update' task.pk %}">
+                <button class="btn">Modifier</button>
+            </a>
+            {% endif %}
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if tasks_no_due_date %}
+<h2>Tâches sans date limite :</h2>
+<ul>
+    {% for task in tasks_no_due_date %}
+    <li>
+        <div>
+            <h5>{{ task.name }}</h5>
+            <p>{{ task.description }}</p>
+            <small>Projet :{{ task.project.name }}</small>
+            <small>Temps restant : {{ task.time_remaining }}</small>
+            {% if task.completed %}
+            <span>Terminée</span>
+            {% else %}
+            <form method="post" action="{% url 'task_complete' task.pk %}">
+                {% csrf_token %}
+                <button type="submit">Marquer comme terminée</button>
+            </form>
+            <a href="{% url 'task_update' task.pk %}">
+                <button class="btn">Modifier</button>
+            </a>
+            {% endif %}
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if completed_tasks %}
+<h2>Tâches terminées :</h2>
+<ul>
+    {% for task in completed_tasks %}
+    <li>
+        <div>
+            <h5>{{ task.name }}</h5>
+            <p>{{ task.description }}</p>
+            <small>Projet :{{ task.project.name }}</small>
+            <small>Date limite : {{ task.end_date }}</small>
+            <small>Temps restant : {{ task.time_remaining }}</small>
+            <span>Terminée</span>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if tasks_without_date %}
+<h2>Tâches sans date limite :</h2>
+<ul>
+    {% for task in tasks_without_date %}
+    <li>
+        <div>
+            <h5>{{ task.name }}</h5>
+            <p>{{ task.description }}</p>
+            <small>Projet :{{ task.project.name }}</small>
+            <span>Sans date limite</span>
+            {% if task.completed %}
+            <span>Terminée</span>
+            {% else %}
+            <form method="post" action="{% url 'task_complete' task.pk %}">
+                {% csrf_token %}
+                <button type="submit">Marquer comme terminée</button>
+            </form>
+            <a href="{% url 'task_update' task.pk %}">
+                <button class="btn">Modifier</button>
+            </a>
+            {% endif %}
+        </div>
+    </li>
+    {% endfor %}
+</ul>
 {% endif %}
 {% endblock %}

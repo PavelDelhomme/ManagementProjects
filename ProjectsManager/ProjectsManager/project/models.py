@@ -6,6 +6,17 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
+from django.utils import timezone
+
+
+def time_remaining(task):
+    now = timezone.now()
+    remaining = task.end_date - now
+    days = remaining.days
+    hours, remainder = divmod(remaining.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return f"{days} jours, {hours} heures et {minutes} minutes"
+
 
 class Project(models.Model):
     name = models.CharField(max_length=200, verbose_name=_('Nom'))
@@ -31,7 +42,8 @@ class Task(models.Model):
     assigned_to = models.ManyToManyField(User, related_name='assigned_tasks')
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
     start_date = models.DateField()
-    end_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
+    due_date = models.DateField(null=True, blank=True)
     priority = models.IntegerField(default=1)
     status = models.CharField(max_length=20, choices=[('incomplete', 'Incomplète'), ('complete', 'Complète')], )
     comments = models.TextField(blank=True)

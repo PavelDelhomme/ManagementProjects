@@ -1,21 +1,26 @@
+from datetime import datetime
+
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic.edit import DeleteView
-from django.views.generic import CreateView, UpdateView, DetailView
+from django.views import View
+from django.views.generic.edit import DeleteView, FormMixin
+from django.views.generic import CreateView, UpdateView, DetailView, RedirectView
 from django.views.generic import ListView
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy, reverse
-from django.http import JsonResponse, Http404
-from .models import Project, Task, Event
+from django.http import JsonResponse, Http404, HttpResponseRedirect
+from .models import Project, Task, Event, time_remaining
 from .forms import ProjectForm, TaskForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 
 from django.contrib.auth import get_user_model
+from .models import time_remaining
 
 User = get_user_model()
 
@@ -86,93 +91,70 @@ class ProjectDeleteView(DeleteView):
         return obj
 
 
-class ProjectDetailView(DetailView):
-    model = Project
-    template_name = 'project/project_detail.html'
-    context_object_name = 'project'
-
-    def get(self, request, *args, **kwargs):
-        project = self.get_object()
-        # self.request.session['project_id'] = project.id
-        self.request.session['project_id'] = self.kwargs['pk']
-        if not project.can_be_viewed_by(request.user):
-            raise Http404
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        project_id = self.kwargs['pk']
-        context['project'] = Project.objects.get(id=project_id)
-        context['tasks'] = Task.objects.filter(project=project_id)
-        # project = self.get_object()
-        # context['tasks'] = project.tasks()
-        # context['form'] = TaskForm(initial={'project': project})
-        return context
-
-
 class TaskCreateView(CreateView):
     model = Task
-    form_class = TaskForm
+    fields = ['name', 'description', 'assigned_to', 'start_date', 'end_date', 'status', 'comments']
     template_name = 'project/task_create.html'
-    success_url = '/'
+    success_url = reverse_lazy('task_list')
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        form.instance.project_id = self.kwargs['project_id']
+        form.instance.created_by = self.request.user
+        form.instance.modified_by = self.request.user
+        response = super().form_valid(form)
+        return response
+
+    def get_success_url(self):
+        return reverse_lazy('project_detail', kwargs={'pk': self.object.project_id})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['project'] = get_object_or_404(Project, pk=self.kwargs['project_id'])
         return context
 
-    def form_valid(self, form):
-        form.instance.project_id = self.kwargs['project_id']
-        return super().form_valid(form)
 
-    # model = Task
-    # form_class = TaskForm
-    # template_name = 'project/task_create.html'
-    # success_url = reverse_lazy('project_list')
-
-    # Mettre à jour la méthode form_valid() pour inclure l'ID du projet
-    # def get(self, request, project_id):
-    #    project = get_object_or_404(Project, pk=project_id)
-    #    form = TaskForm()
-    #    print(project_id)
-    #    return render(request, self.template_name, {'form': form, 'project': project})
-
-    # def form_valid(self, form):
-    #    project_id = self.request.session.get('project_id') or self.kwargs['project_id']
-    #    form.instance.project = Project.objects.get(pk=project_id)
-
-    # project = get_object_or_404(Project, id=self.kwargs['project_id'])
-    # form.instance.created_by = self.request.user
-    # form.instance.project = project
-    # messages.success(self.request, 'La tâche a été créée avec succès.')
-    #    return super().form_valid(form)
-
-    # def get_success_url(self):
-    #    project_id = self.request.session.get('project_id') or self.kwargs['project_id']
-    #    return reverse('project_detail', kwargs={'pk': project_id})
-    # return reverse('project_detail', kwargs={'project_id': self.kwargs['project_id'], 'task_id': self.object.pk})
-
-    # Mettre à jour la méthode get_context_data() pour inclure l'ID du projet
-    # def get_context_data(self, **kwargs):
-    #    context = super().get_context_data(**kwargs)
-    #    context['project'] = ProjectForm()
-    #    return context
-
-
-class TaskListView(ListView):
+class TaskListView(LoginRequiredMixin, ListView):
     model = Task
+    context_object_name = 'tasks'
     template_name = 'project/task_list.html'
+    paginate_by = 10
 
     def get_queryset(self):
-        return Task.objects.filter(
-            assigned_to=self.request.user)
-
-    # ordering = ['-status', '-priority', '-start_date']
+        project_id = self.kwargs.get('project_id')
+        completed = self.request.GET.get('completed', None) == 'True'
+        if completed == 'True':
+            return Task.objects.filter(project_id=project_id, status="completed")
+        elif completed == 'False':
+            return Task.objects.filter(project_id=project_id, status='incompleted')
+        else:
+            return Task.objects.filter(project_id=project_id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        tasks = Task.objects.filter(assigned_to=self.request.user, status="Complete", end_date__lte=datetime.today())
         context['tasks'] = self.get_queryset()
+        today = timezone.now().date()
+        for task in tasks:
+            task.time_remaining = time_remaining(task.end_date)
+        context['tasks_today'] = Task.objects.filter(assigned_to=self.request.user, end_date=today).order_by('priority')
+        context['tasks_later'] = Task.objects.filter(assigned_to=self.request.user, end_date__gt=today).order_by(
+            'end_date')
+        context['completed_tasks'] = Task.objects.filter(assigned_to=self.request.user, status="Complete").order_by(
+            '-end_date')
+        context['tasks_no_due_date'] = Task.objects.filter(assigned_to=self.request.user, end_date=None).order_by(
+            'priority')
         return context
+
 
 class TaskDetailView(ListView):
     """
@@ -186,10 +168,10 @@ class TaskDetailView(ListView):
         project_id = self.kwargs['project_id']
         task_id = self.kwargs['task_id']
         task = Task.objects.get(project__id=project_id, id=task_id)
-        context['task'] = task
+        t_remaining = time_remaining(task.date_fin_prevue)
+        print(f"temps restant de la tâche : {t_remaining}")
+        context = {'task': task, 'time_remaining': t_remaining}
         return context
-        # context['comment_form'] = CommentForm()
-        # context['comment_list'] = Comment.objects.filter(task_id=self.kwargs['pk'])
 
     def get_queryset(self):
         project_id = self.kwargs['project_id']
@@ -200,7 +182,8 @@ class TaskDetailView(ListView):
         return queryset.filter(pk=task_id, project__pk=project_id)
 
     def success_url(self):
-        return reverse('task_detail', kwargs={'project_id': self.object.project.pk, 'pk': self.object.pk})
+        return reverse('task_detail', kwargs={'project_id': self.object.project.pk, 'pk': self.object.pk,
+                                              'time_remaining': time_remaining})
 
 
 class TaskUpdateView(UpdateView):
@@ -208,8 +191,6 @@ class TaskUpdateView(UpdateView):
     form_class = TaskForm
     template_name = 'project/task_update.html'
     success_url = reverse_lazy('tasks_list')
-
-    # success_url = reverse_lazy('project_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -225,12 +206,50 @@ class TaskUpdateView(UpdateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        # Si le formulaire n'est pas valide, renvoyer la page avec le formulaire et les erreurs
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_success_url(self):
         return reverse('task_list')
-        # return reverse('task_detail', kwargs={'project_id': self.object.project.pk, 'task_id': self.object.pk})
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['project_id'] = self.get_object().project.id
+        return kwargs
+
+
+class MarkTaskAsCompletedView(LoginRequiredMixin, View):
+    def post(self, request, project_id, task_id, *args, **kwargs):
+        task = get_object_or_404(Task, pk=task_id)
+        task.status = 'complete'
+        task.date_fin_reelle = timezone.now()
+        if task.date_debut_prevue:
+            task.temps_reel = (task.date_fin_reelle - task.date_debut_prevue).days * 8
+        else:
+            task.temps_reel = None
+        task.temps_passe_reel = task.temps_reel
+        task.temps_restant_reel = 0
+        task.avancement_reel = 100
+        task.save()
+        messages.success(request, "La tâche a été marquée comme terminée.")
+        return HttpResponseRedirect(self.get_redirect_url(project_id=project_id))
+
+    def get_redirect_url(self, *args, **kwargs):
+        project_id = kwargs['project_id']
+        # return reverse_lazy('project_detail', args=[project_id])
+        return f"{reverse('task_list')}?completed=True&project_id={project_id}"
+
+
+class MarkTaskAsIncompleteView(LoginRequiredMixin, RedirectView):
+    def post(self, request, *args, **kwargs):
+        task = get_object_or_404(Task, pk=kwargs['task_id'])
+        task.status = 'incomplete'
+        task.save()
+        messages.success(request, "La tâche a été marquée comme non terminée.")
+        return super().post(request, *args, **kwargs)
+
+    def get_redirect_url(self, *args, **kwargs):
+        project_id = kwargs['project_id']
+        return reverse_lazy('project_detail', args=[project_id])
 
 
 class TaskDeleteView(DeleteView):
@@ -248,23 +267,22 @@ class TaskDeleteView(DeleteView):
         return context
 
 
-def complete_task(request, pk):
-    task = get_object_or_404(Task, pk=pk)
-    task.status = 'COMPLETED'
-    task.save()
-    return redirect('task_list')
+# def complete_task(request, pk):
+#    task = get_object_or_404(Task, pk=pk)
+#    task.status = 'COMPLETED'
+#    task.save()
+#    return redirect('task_list')
 
+class ProjectDetailView(DetailView):
+    model = Project
+    template_name = 'project/project_detail.html'
 
-@login_required
-def add_task_comment(request, pk):
-    task = get_object_or_404(Task, pk=pk)
-    if request.method == 'POST':
-        task.comments = request.POST['comments']
-        task.save()
-    context = {
-        'task': task,
-    }
-    return render(request, 'project/task_detail.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        project_id = self.kwargs['pk']
+        context['project'] = Project.objects.get(id=project_id)
+        context['tasks'] = Task.objects.filter(project=project_id)
+        return context
 
 
 class SignUpView(CreateView):
@@ -278,14 +296,16 @@ def all_notifications(request):
     return render(request, 'all_notifications.html')
 
 
-def project_detail(request, pk):
-    project = get_object_or_404(Project, pk=pk)
-    tasks = Task.objects.filter(project=project)
+@login_required
+def add_task_comment(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    if request.method == 'POST':
+        task.comments = request.POST['comments']
+        task.save()
     context = {
-        'project': project,
-        'tasks': tasks,
+        'task': task,
     }
-    return render(request, 'project/project_detail.html', context)
+    return render(request, 'project/task_detail.html', context)
 
 
 @login_required

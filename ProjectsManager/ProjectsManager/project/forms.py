@@ -23,32 +23,75 @@ class ProjectForm(forms.ModelForm):
                   'end_date']  # Les champs du model sur lesquels on va travailler
 
 
+# class TaskForm(forms.ModelForm):
+#    """
+#    Form for creating a new task
+#    """
+#    start_date = forms.DateField(widget=SelectDateWidget)
+#    end_date = forms.DateField(widget=SelectDateWidget)
+#    assigned_to = forms.ModelMultipleChoiceField(
+#        queryset=User.objects.all(),
+#        widget=forms.CheckboxSelectMultiple,
+#        required=False
+#    )
+#    created_at = forms.DateField(widget=SelectDateWidget)
+#    project = forms.IntegerField(widget=forms.HiddenInput())
+
+# Ajout de la zone de texte cachée pour l'ID de projet
+#   project_id = forms.IntegerField(widget=forms.HiddenInput())
+
+#   class Meta:
+#        model = Task
+#        fields = ['name', 'description', 'assigned_to', 'start_date', 'end_date', 'priority', 'status', 'comments',
+#                  'user', 'type', 'avancement', 'temps_restant', 'date_fin_reelle', 'temps_reel', 'temps_restant_reel',
+#                  'temps_estime_reel', 'temps_passe_reel', 'avancement_reel', 'date_debut_reelle',
+#                  'date_fin_prevue', 'temps_estime_prevu', 'temps_restant_prevu', 'temps_passe_prevu',
+#                  'date_debut_prevue', 'project']
+#        widgets = {
+#            "start_date": DateInput(),
+#            "end_date": DateInput(),
+#        }
+
+"""
 class TaskForm(forms.ModelForm):
     """
-    Form for creating a new task
-    """
-    start_date = forms.DateField(widget=SelectDateWidget)
-    end_date = forms.DateField(widget=SelectDateWidget)
-    assigned_to = forms.ModelMultipleChoiceField(
-        queryset=User.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-    created_at = forms.DateField(widget=SelectDateWidget)
-    project = forms.IntegerField(widget=forms.HiddenInput())
+# Form for creating a new task
+"""
+assigned_to = forms.ModelMultipleChoiceField(
+    queryset=None,
+    widget=forms.CheckboxSelectMultiple,
+    required=False
+)
 
-    # Ajout de la zone de texte cachée pour l'ID de projet
-    project_id = forms.IntegerField(widget=forms.HiddenInput())
+start_date = forms.DateField(widget=SelectDateWidget())
+end_date = forms.DateField(widget=SelectDateWidget())
 
+class Meta:
+    model = Task
+    fields = ['name', 'description', 'assigned_to', 'start_date', 'end_date', 'priority', 'status', 'comments']
+
+def __init__(self, *args, **kwargs):
+    self.project = kwargs.pop('project', None)
+    super().__init__(*args, **kwargs)
+    if self.project:
+        self.fields['assigned_to'].queryset = self.project.members.all()
+"""
+
+
+class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
+        exclude = ['project', 'temps_estime', 'temps_passe', 'temps_restant', 'date_modification', 'date_fin_reelle',
+                   'temps_reel', 'temps_restant_reel', 'temps_estime_reel', 'temps_passe_reel', 'avancement_reel',
+                   'date_debut_reelle', 'temps_estime_prevu',
+                   'temps_restant_prevu', 'temps_passe_prevu']
         fields = ['name', 'description', 'assigned_to', 'start_date', 'end_date', 'priority', 'status', 'comments',
-                  'user', 'type', 'avancement', 'temps_restant', 'date_fin_reelle', 'temps_reel', 'temps_restant_reel',
-                  'temps_estime_reel', 'temps_passe_reel', 'avancement_reel', 'date_debut_reelle',
-                  'date_fin_prevue', 'temps_estime_prevu', 'temps_restant_prevu', 'temps_passe_prevu',
-                  'date_debut_prevue', 'project']
-        widgets = {
-            "start_date": DateInput(),
-            "end_date": DateInput(),
-        }
+                  'user', 'type', 'avancement', 'date_debut_prevue', 'date_fin_prevue']
 
+    def __init__(self, *args, **kwargs):
+        project_id = kwargs.pop('project_id', None)
+        super().__init__(*args, **kwargs)
+        self.fields['date_debut_prevue'].widget = SelectDateWidget()
+        self.fields['date_debut_prevue'].initial = datetime.now()
+        self.fields['date_fin_prevue'].widget = SelectDateWidget()
+        self.fields['date_fin_prevue'].initial = datetime.now()
