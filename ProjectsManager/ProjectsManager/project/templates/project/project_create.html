@@ -54,7 +54,7 @@
     <h1 class="mb-5">
         Créer un nouveau projet
     </h1>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <div class="form-group">
@@ -74,6 +74,7 @@
         <button type="submit" class="btn btn-primary">Créer</button>
     </form>
 </div>
+
 <script>
     // Récupère l'élément HTML du bouton "Aujourd'hui"
     var todayBtn = document.getElementById("todayBtn");
