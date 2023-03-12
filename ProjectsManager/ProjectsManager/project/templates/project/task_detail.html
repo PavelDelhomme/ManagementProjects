@@ -142,7 +142,8 @@
             <h1 class="mb-4">{{ task.name }}</h1>
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h4 class="m-0">Tâche</h4>
-                <a href="{% url 'task_update' task_id=task.pk %}" class="btn btn-primary">Modifier</a>
+                <a href="{% url 'task_update' project_id=task.project.pk pk=task.pk %}"
+                   class="btn btn-primary">Modifier</a>
             </div>
             <div class="card">
                 <div class="card-body">

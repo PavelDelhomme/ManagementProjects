@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5"> <!-- container -->
+    <h1 class="mb-5"> <!-- titre -->
+        {% if form.instance.pk %}Modifier{% else %}Ajouter{% endif %} une tâche
+    </h1> <!-- titre -->
+    <form method="post"> <!-- formulaire -->
+        {% csrf_token %} <!-- token -->
+        <div class="form-group"> <!-- champ "nom" -->
+            <label for="{{ form.name.id_for_label }}">Nom :</label>
+            {{ form.name }}
+        </div> <!-- champ "nom" -->
+
+        <div class="form-group"> <!-- champ "description" -->
+            <label for="{{ form.description.id_for_label }}">Description :</label>
+            {{ form.description }}
+        </div> <!-- champ "description" -->
+
+        <div class="form-group"> <!-- champ "assigné à" -->
+            <label for="{{ form.assigned_to.id_for_label }}">Assigné à :</label>
+            {% for user in form.assigned_to %}
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="assigned_to_{{ user.pk }}" name="assigned_to"
+                       {% if user in form.initial.assigned_to.all %}checked{% endif %}
+                       value="{{ user.pk }}">
+                <label class="form-check-label" for="assigned_to_{{ user.pk }}">{{ user.username }}</label>
+            </div>
+            {% endfor %}
+        </div> <!-- champ "assigné à" -->
+
+        <div class="form-group"> <!-- champ "projet" -->
+            <label for="{{ form.project.id_for_label }}">Projet :</label>
+            {{ form.project }}
+        </div> <!-- champ "projet" -->
+
+        <div class="form-group">
+            <label for="{{ form.user.id_for_label }}">Utilisateur :</label>
+            {{ form.user }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.avancement.id_for_label }}">Avancement :</label>
+        </div>
+
+        <div class="form-group"> <!-- champ "date de début" -->
+            <label for="{{ form.start_date.id_for_label }}">Date de début :</label>
+            {{ form.start_date }}
+        </div> <!-- champ "date de début" -->
+
+        <div class="form-group"> <!-- champ "date de fin" -->
+            <label for="{{ form.end_date.id_for_label }}">Date de fin :</label>
+            {{ form.end_date }}
+        </div> <!-- champ "date de fin" -->
+
+        <div class="form-group"> <!-- champ "priorité" -->
+            <label for="{{ form.priority.id_for_label }}">Priorité :</label>
+            {{ form.priority }}
+        </div> <!-- champ "priorité" -->
+
+        <div class="form-group"> <!-- champ "type" -->
+            <label for="{{ form.type.id_for_label }}">Type :</label>
+            {{ form.type }}
+        </div>
+
+        <div class="form-group"><!-- champ "avancement" -->
+            <label for="{{ form.avancement.id_for_label }}">Avancement :</label>
+            {{ form.avancement }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.temps_estime.id_for_label }}">Temps estimé :</label>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.temps_passe.id_for_label }}">Temps passé :</label>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.temps_restant.id_for_label }}">Temps restant :</label>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.statut.id_for_label }}">Statut :</label>
+            {{ form.statut }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.date_modification.id_for_label }}">Date de modification :</label>
+            {{ form.date_modification }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.date_fin_reelle.id_for_label }}">Date de fin réelle :</label>
+            {{ form.date_fin_reelle }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.temps_reel.id_for_label }}">Temps réel :</label>
+            {{ form.temps_reel }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.temps_restant_reel.id_for_label }}">Temps restant réel :</label>
+            {{ form.temps_restant_reel }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.avancement_reel.id_for_label }}">Avancement réel :</label>
+            {{ form.avancement_reel }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.date_debut_reelle.id_for_label }}">Date de début réelle :</label>
+            {{ form.date_debut_reelle }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.date_debut_prevue.id_for_label }}">Date de début prévue :</label>
+            {{ form.date_debut_prevue }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.date_fin_prevue.id_for_label }}">Date de fin prévue :</label>
+            {{ form.date_fin_prevue }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.temps_estime_prevu.id_for_label }}">Temps estimé prévu :</label>
+            {{ form.temps_estime_prevu }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.temps_restant_prevu.id_for_label }}">Temps restant prévu :</label>
+            {{ form.temps_restant_prevu }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.temps_passe_prevu.id_for_label }}">Temps passé prévu :</label>
+            {{ form.temps_passe_prevu }}
+        </div>
+
+        <!--<div class="form-group">  champ "statut" -->
+        <!--<label for="{{ form.status.id_for_label }}">Statut :</label>-->
+        <!--{{ form.status }}-->
+        <!-- </div>--> <!-- champ "statut" -->
+
+
+        <div class="form-group"> <!-- champ "commentaires" -->
+            <label for="{{ form.comments.id_for_label }}">Commentaires :</label>
+            {{ form.comments }}
+        </div> <!-- champ "commentaires" -->
+
+        <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Modifier{% else %}Ajouter{% endif %}
+        </button> <!-- bouton -->
+    </form> <!-- formulaire -->
+</div> <!-- container -->
+{% endblock %}

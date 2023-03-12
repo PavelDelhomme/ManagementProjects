@@ -1,14 +1,178 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5"> <!-- container -->
-  <h1 class="mb-5"> <!-- titre -->
-    Modifier la tâche "{{ task.name }}" du projet "{{ task.project.name }}"
-  </h1> <!-- titre -->
-  <form method="post"> <!-- formulaire -->
-    {% csrf_token %} <!-- token -->
-    {{ form.as_p }} <!-- champs du formulaire -->
-    <button type="submit" class="btn btn-primary">Modifier</button> <!-- bouton -->
-  </form> <!-- formulaire -->
-</div> <!-- container -->
+<style>
+    /* Centrer le titre */
+    h1 {
+        text-align: center;
+    }
+
+    /* Augmenter la taille de police du titre */
+    h1 {
+        font-size: 36px;
+    }
+
+    /* Ajouter une marge en haut et en bas du formulaire */
+    form {
+
+        max-width: 500px;
+        margin: 0 auto;
+        /*margin: 20px 0;*/
+    }
+
+    form label {
+        font-weight: bold;
+    }
+
+    /* Aligner les boutons du formulaire à droite */
+    form button {
+        float: right;
+    }
+
+    form input[type="text"],
+    form textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    /* Ajouter une marge en haut et en bas des boutons du formulaire */
+    form button[type="submit"] {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    /* Ajouter une marge en haut et en bas des champs de formulaire */
+    form p {
+        margin: 10px 0;
+    }
+
+    /* Ajouter une bordure aux champs de formulaire actifs */
+    form input:focus,
+    form textarea:focus {
+        border: 1px solid #007bff;
+    }
+
+    /* Changer la couleur du bouton de modification */
+    form button.btn-primary {
+        padding: 10px 20px;
+        cursor: pointer;
+        align-items: center;
+        align-content: center;
+        background-color: #007bff;
+        border-color: #007bff;
+        margin-top: 20px; /* ajouter cette propriété */
+    }
+
+    /* Changer la couleur du bouton de modification au survol */
+    form button.btn-primary:hover {
+        padding: 10px 20px;
+
+        background-color: #0062cc;
+        margin-top: 20px; /* ajouter cette propriété */
+        border-color: #005cbf;
+    }
+
+    /* Changer la couleur du bouton de suppression */
+    .btn-danger {
+        padding: 10px 20px;
+        cursor: pointer;
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #fff;
+        border-radius: 4px;
+        margin-top: 20px; /* ajouter cette propriété */
+    }
+
+    /* Changer la couleur du bouton de suppression au survol */
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+
+    .btn.btn-danger {
+        color: #fff;
+        margin-top: 40px!important; /* ajouter cette propriété */
+        z-index: -1;
+    }
+
+    .col-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+
+</style>
+<div class="container mt-5">
+    <h1 class="mb-5">
+        Modifier la tâche "{{ task.name }}" du projet "{{ task.project.name }}"
+    </h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.id_for_label }}">Nom : </label>
+            <div class="col-12">
+                {{ form.name }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="{{ form.id_for_label }}">Description : </label>
+            {{ form.description }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.id_for_label }}">Date de début : </label>
+            {{ form.start_date }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.id_for_label }}">Date de fin : </label>
+            {{ form.end_date }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.id_for_label }}">Priorité : </label>
+            {{ form.priority }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.id_for_label }}">Utilisateur : </label>
+            {{ form.user }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.id_for_label }}">Type : </label>
+            {{ form.type }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.id_for_label }}">Temps restant : </label>
+            <!--{{ form.remaining_time }}-->
+        </div>
+        <div class="form-group">
+            <label for="{{ form.id_for_label }}">Date de création : </label>
+            {{ form.created_at }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.id_for_label }}">Date de modification : </label>
+            {{ form.updated_at }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.id_for_label }}">Date de fin réelle : </label>
+            {{ form.real_end_date }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.id_for_label }}">Temps restant réel : </label>
+            <!--form.real_remaining_time|remaining_days jours-->
+        </div>
+        <div class="form-group">
+            <label for="{{ form.id_for_label }}">Statut : </label>
+            {{ form.status }}
+        </div>
+        <a href="{% url 'task_delete' pk=task.pk %}" class="btn btn-danger">Supprimer</a>
+
+        <button type="submit" class="btn btn-primary">Modifier</button>
+    </form>
+</div>
 {% endblock %}

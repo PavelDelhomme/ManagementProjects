@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Project, Task, Event, Message
+from .models import Project, Task, Event
 from django_admin_listfilter_dropdown.filters import DropdownFilter
 
 
@@ -21,7 +21,3 @@ class TaskAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'description', 'project', 'status')
     search_fields = ('name', 'project__name')
     list_filter = ('status',)
-
-
-admin.site.register(Event)
-admin.site.register(Message)

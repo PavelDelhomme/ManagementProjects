@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -6,18 +8,15 @@ from django.urls import reverse
 
 
 class Project(models.Model):
-    """
-    Project model
-    """
-    name = models.CharField(max_length=200, verbose_name=_('Nom'))  # project name
-    description = models.TextField(verbose_name=_('Description'))  # project description
+    name = models.CharField(max_length=200, verbose_name=_('Nom'))
+    description = models.TextField(verbose_name=_('Description'))
 
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
                                    related_name='created_projects')
-    assigned_to = models.ManyToManyField(User, related_name='assigned_projects')  # users assigned to the project
-    start_date = models.DateField()  # project start date
-    end_date = models.DateField()  # project end date
-    comments = models.TextField(blank=True)  # project comments
+    assigned_to = models.ManyToManyField(User, related_name='assigned_projects')
+    start_date = models.DateField()
+    end_date = models.DateField()
+    comments = models.TextField(blank=True)
 
     def tasks(self):
         return self.task_set.all()
@@ -27,61 +26,45 @@ class Project(models.Model):
 
 
 class Task(models.Model):
-    """
-    Task model
-    """
-    name = models.CharField(max_length=200)  # task name
-    description = models.TextField()  # task description
-    assigned_to = models.ManyToManyField(User, related_name='assigned_tasks')  # users assigned to the task
-    # project = models.ForeignKey(Project, related_name='tasks', on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)  # project to which the task belongs
-    start_date = models.DateField()  # task start date
-    end_date = models.DateField()  # task end date
-    priority = models.IntegerField(default=1)  # task priority
-    status = models.CharField(max_length=20, choices=[('incomplete', 'Incomplète'), ('complete', 'Complète')],
-                              default='incomplete')  # task status
-    comments = models.TextField(blank=True)  # task comments
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+    assigned_to = models.ManyToManyField(User, related_name='assigned_tasks')
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    priority = models.IntegerField(default=1)
+    status = models.CharField(max_length=20, choices=[('incomplete', 'Incomplète'), ('complete', 'Complète')], )
+    comments = models.TextField(blank=True)
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_tasks')
+    type = models.CharField(max_length=200, default='Tâche')
+    avancement = models.IntegerField(default=0)
+    temps_estime = models.IntegerField(default=0)
+    temps_passe = models.IntegerField(default=0)
+    temps_restant = models.IntegerField(default=0)
+    date_modification = models.DateTimeField(auto_now=True)
+    date_fin_reelle = models.DateTimeField(null=True, blank=True)
+    temps_reel = models.IntegerField(null=True, blank=True)
+    temps_restant_reel = models.IntegerField(null=True, blank=True)
+    temps_estime_reel = models.IntegerField(null=True, blank=True, default=0)
+    temps_passe_reel = models.IntegerField(null=True, blank=True)
+    avancement_reel = models.IntegerField(null=True, blank=True)
+    date_debut_reelle = models.DateTimeField(null=True, blank=True)
+    date_debut_prevue = models.DateTimeField(null=True, blank=True)
+    date_fin_prevue = models.DateTimeField(null=True, blank=True)
+    temps_estime_prevu = models.IntegerField(null=True, blank=True)
+    temps_restant_prevu = models.IntegerField(null=True, blank=True)
+    temps_passe_prevu = models.IntegerField(null=True, blank=True)
 
     def get_absolute_url(self):
         return reverse('task_detail', kwargs={'project_id': self.project.pk, 'task_id': self.pk})
 
-    # def get_absolute_url(self):
-    #    return reverse('task_update', kwargs={'task_id': self.pk})
-
-    # def get_absolute_url(self):
-    # return reverse('task-detail', kwargs={'pk': self.pk})
-    # return reverse('task_detail', kwargs={'priject_id': self.project.pk, 'task_id': self.pk})
-
 
 class Event(models.Model):
-    """
-    Event model
-    """
-    title = models.CharField(max_length=200)  # event title
-    start_date = models.DateTimeField()  # event start date
-    end_date = models.DateTimeField()  # event end date
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)  # project to which the event belongs
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)  # task to which the event belongs
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # user to which the event belongs
-    comments = models.TextField(blank=True)  # event comments
-
-
-class Conversation(models.Model):
-    participants = models.ManyToManyField(User, related_name='conversations')
-    last_message = models.ForeignKey(
-        'Message',
-        on_delete=models.SET_NULL,
-        related_name='conversation_last_messages',
-        blank=True,
-        null=True,
-    )
-
-
-class Message(models.Model):
-    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['-timestamp']
+    title = models.CharField(max_length=200)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comments = models.TextField(blank=True)

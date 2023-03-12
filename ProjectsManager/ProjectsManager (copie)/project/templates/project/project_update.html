@@ -1,10 +1,171 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Modifier le projet "{{ project.name }}"</h1>
-  <form method="post">
+<h1>Modifier le projet "{{ project.name }}"</h1>
+<form method="post" class="needs-validation" novalidate>
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Enregistrer les modifications</button>
-  </form>
+    <div class="form-group">
+        <label for="{{ form.name.id_for_label }}">Nom :</label>
+        {{ form.name }}
+        <div class="invalid-feedback">
+            {{ form.name.errors }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="{{ form.description.id_for_label }}">Description :</label>
+        {{ form.description }}
+        <div class="invalid-feedback">
+            {{ form.description.errors }}
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <label for="{{ form.assigned_to.id_for_label }}">Assigné à :</label>
+        {{ form.assigned_to }}
+        <div class="invalid-feedback">
+            {{ form.assigned_to.errors }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="{{ form.start_date.id_for_label }}">Date de début :</label>
+        {{ form.start_date }}
+        <div class="invalid-feedback">
+            {{ form.start_date.errors }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="{{ form.end_date.id_for_label }}">Date de fin :</label>
+        {{ form.end_date }}
+        <div class="invalid-feedback">
+            {{ form.end_date.errors }}
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+</form>
+
+<style>
+    h1 {
+        text-align: center;
+    }
+
+    form {
+        max-width: 800px;
+        margin: auto;
+        padding: 2rem;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    .form-group {
+        margin: auto;
+    }
+
+    label {
+        display: inline-block;
+        margin-bottom: 0.5rem;
+    }
+
+    input[type=text], textarea {
+        display: block;
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    input[type=text]:focus, textarea:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        outline: none;
+    }
+
+    .btn-primary {
+        display: inline-block;
+        font-weight: 400;
+        color: #fff;
+        text-align: center;
+        vertical-align: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background-color: #007bff;
+        border: 1px solid #007bff;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        transition: all 0.15s ease-in-out;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .btn-primary:hover {
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+
+    .btn-primary:focus {
+        box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
+    }
+
+    select.custom-select {
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        display: inline-block;
+        font-size: 1rem;
+        font-weight: 400;
+        height: calc(1.5em + 0.75rem + 2px);
+        line-height: 1.5;
+        padding: 0.375rem 1.75rem 0.375rem 0.75rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        vertical-align: middle;
+        width: auto;
+    }
+
+    select.custom-select option {
+        background-color: #fff;
+        color: #000;
+    }
+
+    .needs-validation input:valid {
+        border-color: #28a745;
+    }
+
+    .needs-validation input:invalid {
+        border-color: #dc3545;
+    }
+
+    .needs-validation textarea:valid {
+        border-color: #28a745;
+    }
+
+    .needs-validation textarea:invalid {
+        border-color: #dc3545;
+    }
+
+    .needs-validation select:valid {
+        border-color: #28a745;
+    }
+
+    .needs-validation select:invalid {
+        border-color: #dc3545;
+    }
+    .text-muted {
+    color: #6c757d;
+}
+
+
+</style>
+
 {% endblock %}

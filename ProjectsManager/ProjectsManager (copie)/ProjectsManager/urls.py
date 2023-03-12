@@ -32,12 +32,8 @@ urlpatterns = [
     path('', include('users.urls')),  # Users app URL (users/)
 
     # Autres vues de l'application
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),  # Login page URL (login/)
-    path('logout/', auth_views.LogoutView.as_view(template_name='logout.html', next_page="login"), name='logout'),
     # Logout page URL (logout/)
-    path('', include('project.urls')),  # Project app URL (project/)
     path('signup/', SignUpView.as_view(), name='signup'),  # Signup page URL (signup/)
-    path('users/', include('users.urls')),  # Users app URL (users/)
 
     path('', HomePageView.as_view(), name='dashboard'),  # Home page URL (home/)
 ]

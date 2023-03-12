@@ -4,49 +4,40 @@ from .views import (
     calendar,
     TaskListView, add_task_comment, TaskDetailView, TaskCreateView, TaskUpdateView, TaskDeleteView,
     SignUpView,
-    MessageCreateView,
-    MessageDetailView,
     profile,
     event_api,
     all_notifications,
+    complete_task,
 )
 
 urlpatterns = [
 
     # Task URLs
-    path('tasks/', TaskListView.as_view(), name='task_list'),  # lister toutes les tâches
+    path('tasks/', TaskListView.as_view(), name='task_list'),
     path('tasks/<int:project_id>/<int:task_id>/', TaskDetailView.as_view(), name='task_detail'),
-    # detailler une tâche
-    path('tasks/create/<int:project_id>/', TaskCreateView.as_view(), name='task_create'),  # créer une tâche
+    path('tasks/create/<int:project_id>/', TaskCreateView.as_view(), name='task_create'),
     path('tasks/<int:pk>/add-comment/', add_task_comment, name='task_add_comment'),
-    # ajouter un commentaire à une tâche
-    path('tasks/by-status/', TaskListView.as_view(), name='task_list_by_status'),  # lister toutes les tâches par status
+    path('tasks/<int:pk>/complete/', complete_task, name='task_complete'),
+    # path('tasks/<int:pk>/uncomplete/', uncomplete_task, name='task_uncomplete'),
+    path('tasks/by-status/', TaskListView.as_view(), name='task_list_by_status'),
     path('tasks/by-priority/', TaskListView.as_view(), name='task_list_by_priority'),
-    # lister toutes les tâches par priorité
-    path('tasks/<int:pk>/update/', TaskUpdateView.as_view(), name='task_update'),  # mettre à jour une tâche
-    # supprimer une tâche
-    path('tasks/<int:pk>/delete/', TaskDeleteView.as_view(), name='task_delete'),  # supprimer une tâche
+    path('tasks/<int:pk>/update/', TaskUpdateView.as_view(), name='task_update'),
+    path('tasks/<int:pk>/delete/', TaskDeleteView.as_view(), name='task_delete'),
 
     # Project URLs
-    path('', ProjectListView.as_view(), name='project_list_by_start_date'),  # lister tous les projets par date de début
-    path('<int:pk>/update/', ProjectUpdateView.as_view(), name='project_update'),  # mettre à jour un projet
-    path('create/', ProjectCreateView.as_view(), name='project_create'),  # créer un projet
-    path('projects/<int:pk>/delete/', ProjectDeleteView.as_view(), name='project_delete'),  # supprimer un projet
-    path('project_detail/<int:pk>/', project_detail, name='project_detail'),  # détaller un projet
-    path('projects/', ProjectListView.as_view(), name='project_list'),  # lister tous les projets
+    path('', ProjectListView.as_view(), name='project_list_by_start_date'),
+    path('<int:pk>/update/', ProjectUpdateView.as_view(), name='project_update'),
+    path('create/', ProjectCreateView.as_view(), name='project_create'),
+    path('projects/<int:pk>/delete/', ProjectDeleteView.as_view(), name='project_delete'),
+    path('project_detail/<int:pk>/', project_detail, name='project_detail'),
+    path('projects/', ProjectListView.as_view(), name='project_list'),
     path('projects/by-start-date/', ProjectListView.as_view(), name='project_list_by_start_date'),
-    # lister tous les projets par date de début
 
     # Calendar URLs
-    # path('calendar/', calendar_view, name='project_calendar'),
-    path('calendar/', calendar, name='calendar'),  # afficher le calendrier
-    path('event_api', event_api, name='event_api'),  # API pour le calendrier
+    path('calendar/', calendar, name='calendar'),
+    path('event_api', event_api, name='event_api'),
     # autres URLs
-    path('signup/', SignUpView.as_view(), name='signup'),  # s'inscrire
-    path('notifications/', all_notifications, name='all_notifications'),  # afficher toutes les notifications
-    path('profile/', profile, name='profile'),  # afficher le profil de l'utilisateur
-
-    # Message URLs
-    path('messages/create/<int:project_id>/', MessageCreateView.as_view(), name='message_create'),
-
+    path('signup/', SignUpView.as_view(), name='signup'),
+    path('notifications/', all_notifications, name='all_notifications'),
+    path('profile/', profile, name='profile'),
 ]
