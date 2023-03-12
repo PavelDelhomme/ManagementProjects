@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import DeleteView
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DetailView
 from django.views.generic import ListView
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy, reverse
@@ -86,36 +86,93 @@ class ProjectDeleteView(DeleteView):
         return obj
 
 
+class ProjectDetailView(DetailView):
+    model = Project
+    template_name = 'project/project_detail.html'
+    context_object_name = 'project'
+
+    def get(self, request, *args, **kwargs):
+        project = self.get_object()
+        # self.request.session['project_id'] = project.id
+        self.request.session['project_id'] = self.kwargs['pk']
+        if not project.can_be_viewed_by(request.user):
+            raise Http404
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        project_id = self.kwargs['pk']
+        context['project'] = Project.objects.get(id=project_id)
+        context['tasks'] = Task.objects.filter(project=project_id)
+        # project = self.get_object()
+        # context['tasks'] = project.tasks()
+        # context['form'] = TaskForm(initial={'project': project})
+        return context
+
+
 class TaskCreateView(CreateView):
     model = Task
     form_class = TaskForm
     template_name = 'project/task_create.html'
-    success_url = reverse_lazy('project_list')
-
-    def form_valid(self, form):
-        project = get_object_or_404(Project,
-                                    id=self.kwargs['project_id'])
-        form.instance.created_by = self.request.user
-        # form.instance.project_id = get_object_or_404(Project, pk=self.kwargs['project_id'])
-        form.instance.project = project
-        print(form.instance.project)
-        return super().form_valid(form)
+    success_url = '/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['project'] = ProjectForm()
+        context['project'] = get_object_or_404(Project, pk=self.kwargs['project_id'])
         return context
+
+    def form_valid(self, form):
+        form.instance.project_id = self.kwargs['project_id']
+        return super().form_valid(form)
+
+    # model = Task
+    # form_class = TaskForm
+    # template_name = 'project/task_create.html'
+    # success_url = reverse_lazy('project_list')
+
+    # Mettre à jour la méthode form_valid() pour inclure l'ID du projet
+    # def get(self, request, project_id):
+    #    project = get_object_or_404(Project, pk=project_id)
+    #    form = TaskForm()
+    #    print(project_id)
+    #    return render(request, self.template_name, {'form': form, 'project': project})
+
+    # def form_valid(self, form):
+    #    project_id = self.request.session.get('project_id') or self.kwargs['project_id']
+    #    form.instance.project = Project.objects.get(pk=project_id)
+
+    # project = get_object_or_404(Project, id=self.kwargs['project_id'])
+    # form.instance.created_by = self.request.user
+    # form.instance.project = project
+    # messages.success(self.request, 'La tâche a été créée avec succès.')
+    #    return super().form_valid(form)
+
+    # def get_success_url(self):
+    #    project_id = self.request.session.get('project_id') or self.kwargs['project_id']
+    #    return reverse('project_detail', kwargs={'pk': project_id})
+    # return reverse('project_detail', kwargs={'project_id': self.kwargs['project_id'], 'task_id': self.object.pk})
+
+    # Mettre à jour la méthode get_context_data() pour inclure l'ID du projet
+    # def get_context_data(self, **kwargs):
+    #    context = super().get_context_data(**kwargs)
+    #    context['project'] = ProjectForm()
+    #    return context
 
 
 class TaskListView(ListView):
     model = Task
     template_name = 'project/task_list.html'
-    ordering = ['-status', '-priority', '-start_date']
 
     def get_queryset(self):
         return Task.objects.filter(
             assigned_to=self.request.user)
 
+    # ordering = ['-status', '-priority', '-start_date']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tasks'] = self.get_queryset()
+        return context
 
 class TaskDetailView(ListView):
     """

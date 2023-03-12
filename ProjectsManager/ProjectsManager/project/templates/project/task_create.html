@@ -9,7 +9,8 @@
                     <h3 class="text-center font-weight-light my-4">Créer une tâche</h3>
                 </div>
                 <div class="card-body">
-                    <form method="post" enctype="multipart/form-data">
+                    <form method="post" enctype="multipart/form-data"
+                          action="{% url 'task_create' project_id=project.pk %}">
                         {% csrf_token %}
                         <div class="form-group">
                             <label class="small mb-1" for="{{ form.name.id_for_label }}">Nom de la tâche</label>
@@ -46,6 +47,7 @@
                         <div class="form-group">
                             <button class="btn btn-primary" type="submit">Créer</button>
                         </div>
+                        <input type="hidden" name="project_id" value="{{ project.pk }}">
                     </form>
                 </div>
             </div>

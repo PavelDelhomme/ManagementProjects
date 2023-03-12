@@ -29,7 +29,7 @@ class Task(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
     assigned_to = models.ManyToManyField(User, related_name='assigned_tasks')
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
     start_date = models.DateField()
     end_date = models.DateField()
     priority = models.IntegerField(default=1)
