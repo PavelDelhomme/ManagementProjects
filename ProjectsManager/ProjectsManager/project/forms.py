@@ -23,6 +23,16 @@ class ProjectForm(forms.ModelForm):
                   'end_date']  # Les champs du model sur lesquels on va travailler
 
 
+class ProjectSearchForm(forms.Form):
+    q = forms.CharField(label='Rechercher un projet',
+                        max_length=100,
+                        widget=forms.TextInput(attrs={'class': 'form-control mr-sm-2',
+                                                      'type': 'search',
+                                                      'placeholder': 'Rechercher un projet',
+                                                      })
+                        )
+
+
 # class TaskForm(forms.ModelForm):
 #    """
 #    Form for creating a new task

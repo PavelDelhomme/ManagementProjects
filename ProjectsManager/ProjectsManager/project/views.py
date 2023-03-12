@@ -18,6 +18,7 @@ from .forms import ProjectForm, TaskForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from django.db.models import Q
 
 from django.contrib.auth import get_user_model
 from .models import time_remaining
@@ -363,3 +364,21 @@ def profile(request):
         'password_form': password_form,
     }
     return render(request, 'profile.html', context)
+
+
+class ProjectSearchView(ListView):
+    model = Project
+    template_name = 'project/project_search.html'
+    context_object_name = 'projects'
+    paginate_by = 10
+
+    def get_query_set(self):
+        query = self.request.GET.get('q')
+        if query:
+            queryset = Project.objects.filter(
+                Q(name__icontains=query) |
+                Q(description__icontains=query)
+            )
+        else:
+            queryset = Project.objects.all()
+        return queryset

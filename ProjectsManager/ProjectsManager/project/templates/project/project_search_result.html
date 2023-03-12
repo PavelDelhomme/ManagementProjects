@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Résultats de la recherche pour "{{ request.GET.q }}"</h1>
+{% if results %}
+  <ul>
+    {% for task in results %}
+      <li><a href="{% url 'task_detail' task.pk %}">{{ task.name }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Aucun résultat trouvé.</p>
+{% endif %}
+{% endblock %}

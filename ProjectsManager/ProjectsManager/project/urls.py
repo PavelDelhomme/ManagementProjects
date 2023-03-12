@@ -7,7 +7,8 @@ from .views import (
     profile,
     event_api,
     all_notifications,
-    MarkTaskAsCompletedView, MarkTaskAsIncompleteView
+    MarkTaskAsCompletedView, MarkTaskAsIncompleteView,
+    ProjectSearchView
 )
 
 urlpatterns = [
@@ -33,6 +34,9 @@ urlpatterns = [
     path('project_detail/<int:pk>/', ProjectDetailView.as_view(), name='project_detail'),
     path('projects/', ProjectListView.as_view(), name='project_list'),
     path('projects/by-start-date/', ProjectListView.as_view(), name='project_list_by_start_date'),
+
+    # Project Search URLs
+    path('search/', ProjectSearchView.as_view(), name='project_search'),
 
     # Calendar URLs
     path('calendar/', calendar, name='calendar'),
