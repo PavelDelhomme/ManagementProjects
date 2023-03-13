@@ -38,6 +38,7 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
+
 class Task(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
@@ -69,6 +70,20 @@ class Task(models.Model):
     temps_estime_prevu = models.IntegerField(null=True, blank=True)
     temps_restant_prevu = models.IntegerField(null=True, blank=True)
     temps_passe_prevu = models.IntegerField(null=True, blank=True)
+    temps_aujourdhui = models.IntegerField(null=True, blank=True)
+
+    @property
+    def time_remaining(self):
+        if self.status == 'complete':
+            return 'Tâche terminée'
+        elif self.end_date:
+            time_left = self.end_date - timezone.now().date()
+            if time_left.days > 0:
+                return f'{time_left.days} jours restant'
+            else:
+                "Aujourd'hui est la date limite"
+        else:
+            return 'Pas de date limite'
 
     def get_absolute_url(self):
         return reverse('task_detail', kwargs={'project_id': self.project.pk, 'task_id': self.pk})

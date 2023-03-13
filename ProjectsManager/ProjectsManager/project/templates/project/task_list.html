@@ -3,56 +3,153 @@
 {% block content %}
 {% if project %}
 <style>
-    .accordion {
-        background-color: #eee;
-        color: #444;
-        cursor: pointer;
-        padding: 18px;
-        width: 100%;
-        text-align: left;
-        border: none;
-        outline: none;
-        transition: 0.4s;
+
+    .underline-text {
+        text-decoration: underline;
     }
 
-    .active, .accordion:hover {
-        background-color: #ccc;
+    .card.mb-4.shadow-sm {
+        box-shadow: 0px 0px 20px rgba(0, 180, 255, 0.5);
     }
 
-    .panel {
-        padding: 0 18px;
-        background-color: white;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.2s ease-out;
+    .card-deck {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
     }
 
-    .panel p {
-        margin: 0;
-        padding: 12px 0;
+    @media (min-width: 576px) {
+        .card-deck {
+            -ms-flex-flow: row wrap;
+            flex-flow: row wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+
+        .card-deck .card {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex: 1 0 0%;
+            flex: 1 0 0%;
+            margin-right: 15px;
+            margin-bottom: 0;
+            margin-left: 15px;
+        }
     }
 
-    .panel ul {
-        margin-top: 0;
-        padding-left: 20px;
+    .card {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-clip: border-box;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
     }
 
-    .panel ul li {
-        margin-bottom: 8px;
+    .car-header h4 {
+        color: #007bff;
     }
-    
+
+    .btn {
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        border: 1px solid transparent;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        transition: color 0.15s ease-in-out,
+        background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out,
+        box-shadow 0.15s ease-in-out;
+    }
+
+    .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .rounded-pill {
+        border-radius: 50rem !important;
+    }
+
+
+    h1 {
+        text-align: center;
+    }
+
+    .my-0 {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    .font-weight-normal {
+        font-weight: normal !important;
+    }
+
+    /* Bouton par défaut */
+    .btn {
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        border: 1px solid transparent;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        transition: color 0.15s ease-in-out,
+        background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out,
+        box-shadow 0.15s ease-in-out;
+    }
+
+    /* Bouton avec fond vert */
+    .btn-success {
+        color: #fff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    /* Bouton avec fond vert au survol */
+    .btn-success:hover {
+        color: #fff;
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+
 </style>
 <h2>Tâches à faire aujourd'hui :</h2>
-<div class="accordion">
+<hr>
+<div>
     <h5>{{ task.name }}</h5>
-    <li class="list-group-item"><a href="{% url 'task_update' task.pk %}">{{ task.name }}</a>
+    <li><a href="{% url 'task_update' task.pk %}">{{ task.name }}</a>
 
         <small>Projet :{{ task.project.name }}</small>
         <small>Date limite : {{ task.end_date }}</small>
         <small>Temps restant : {{ task.time_remaining }}</small>
         <a href="{% url 'task_update' task.pk %}">
-            <div class="panel">
-                <p>{{ task.description }}</p>
+            <div>
+                <p class="text-muted">{{ task.description }}</p>
                 {% if task.completed %}
                 <span>Terminée</span>
                 {% else %}
@@ -84,28 +181,63 @@
 {% if tasks_later %}
 
 <h2>Tâches pour plus tard :</h2>
-<ul>
+<hr>
+<ul class="row">
     {% for task in tasks_later %}
-    <li>
-        <div>
-            <h5>{{ task.name }}</h5>
-            <p>{{ task.description }}</p>
-            <small>Projet :{{ task.project.name }}</small>
-            <small>Date limite : {{ task.end_date }}</small>
+    <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header">
+                <h5 class="my-0 font-weight-normal text-center">{{ task.name }}</h5>
+                <p class="mb-1 text-muted" style="text-decoration: underline;">Description de la
+                    tâche</p>
+                <p class="mb-1" style="font-style: italic; color: #6c757d;">{{ task.description }}</p>
+                <hr>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mt-3 mb-4"> <!-- liste des informations -->
+                    <li>
+                        <p class="list-unstyled">Projet : {{ task.project.name }}</p> <!-- description -->
+                    </li>
+                    <li>
+                        <p>Date limite : {{ task.en_date }}</p>
+                    </li>
+                    <li>
+                        <p>Temps restant : {{ task.date_remaining }}</p>
+                    </li>
+
+                </ul>
+            </div>
+            <small style="color: #6c757d;">Projet :{{ task.project.name }}</small>
+            <small style="color: #28a745;">Date limite : {{ task.end_date }}</small>
+            {% if task.end_date %}
+            <small style="color: #6c757d;">Temps restant : {{ task.time_remaining }}</small>
+
+            {% else %}
+            <small style="color: #6c757d;">Date limite : None</small>
+            {% endif %}
+
             <small>Temps restant : {{ task.time_remaining }}</small>
+            <small>Due date : {{ task.due_date }}</small>
+            <small>Priority : {{ task.priority }}</small>
+            <small>Comments : {{ task.comments }}</small>
+            <small>Type : {{ task.type }}</small>
+            <small>Avancement : {{ task.avancement }}%</small>
+            <small>Temps estimé : {{ task.temps_estime }}h</small>
+            <small>Temps passé : {{ task.temps_passe }}h</small>
+            <small>Temps restant : {{ task.temps_restant }}h</small>
             {% if task.status == 'complete' %}
             <span>Terminée</span>
             {% elif task.status == 'incomplete' %}
             <form method="post" action="{% url 'mark_task_as_completed' task.project.pk task.pk %}">
                 {% csrf_token %}
-                <button type="submit">Marquer comme terminée</button>
+                <button type="submit" class="btn btn-success">Marquer comme terminée</button>
             </form>
             <a href="{% url 'task_update' task.pk %}">
-                <button class="btn">Modifier</button>
+                <button class="btn btn-success">Modifier</button>
             </a>
             {% endif %}
         </div>
-    </li>
+    </div>
     {% endfor %}
 </ul>
 {% endif %}
@@ -165,6 +297,10 @@
             <p>{{ task.description }}</p>
             <small>Projet :{{ task.project.name }}</small>
             <span>Sans date limite</span>
+            <small>Priority : {{ task.priority }}</small>
+            <small>Comments : {{ task.comments }}</small>
+            <small>Type : {{ task.type }}</small>
+            <small>Avancement : {{ task.avancement }}%</small>
             {% if task.completed %}
             <span>Terminée</span>
             {% else %}
