@@ -208,6 +208,7 @@ class TaskUpdateView(UpdateView):
         context['status'] = self.object.get_status_display()
         context['project'] = ProjectForm()
         context['assigned_to_choices'] = User.objects.all()
+        context['time_remaining'] = self.object.time_remaining
         return context
 
     def form_valid(self, form):

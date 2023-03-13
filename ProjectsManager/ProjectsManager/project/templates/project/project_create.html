@@ -57,7 +57,7 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-        <div class="form-group">
+        <!--div class="form-group">
             <label for="{{ form.assigned_to.id_for_label }}">Assigner à</label>
             <div>
                 {% for user in users %}
@@ -70,8 +70,8 @@
                 </div>
                 {% endfor %}
             </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Créer</button>
+        </div-->
+        <button type="submit" class="btn btn-primary" style="text-align: center; align-content: center; align-items: center">Créer</button>
     </form>
 </div>
 

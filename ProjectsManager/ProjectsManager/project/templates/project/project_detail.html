@@ -308,7 +308,7 @@
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-12">
-            <div class="card" >
+            <div class="card">
                 <div class="card-header bg-primary text-white">
                     <h1>{{ project.name }}</h1>
                 </div>
@@ -321,17 +321,75 @@
                     <ul class="list-group">
                         {% for task in project.tasks.all %}
                         <li class="list-group-item"><a href="{% url 'task_update' task.pk %}">{{ task.name }}</a>
+                            <p>{{ task.description }}</p>
+                            <p><strong>Début :</strong> {{ task.start_date }}</p>
+                            <p><strong>Fin :</strong> {{ task.end_date }}</p>
+                            <p><strong>Statut :</strong> {{ task.status }}</p>
+                            <p><strong>Avancement :</strong> {{ task.progression }}%</p>
+                            <p><strong>Commentaire :</strong> {{ task.comment }}</p>
+                            <p><strong>Créé le :</strong> {{ task.created_at }}</p>
+                            <p><strong>Modifié le :</strong> {{ task.updated_at }}</p>
                             {% if task.status == 'incomplete' %}
                             <form method="post"
                                   action="{% url 'mark_task_as_completed' project_id=project.pk task_id=task.pk %}">
                                 {% csrf_token %}
-                                <button type="submit" class="btn-secondary">Marquer comme terminée</button>
+                                <button type="submit" style="
+                                display: inline-block;
+                                font-weight: 400;
+                                color: #fff;
+                                text-align: center;
+                                vertical-align: middle;
+                                -webkit-user-select: none;
+                                -moz-user-select: none;
+                                -ms-user-select: none;
+                                user-select: none;
+                                background-color: #007bff;
+                                border: 1px solid #007bff;
+                                padding: 0.375rem 0.75rem;
+                                font-size: 1rem;
+                                line-height: 1.5;
+                                border-radius: 0.25rem;
+                                transition: all 0.15s ease-in-out;
+                                cursor: pointer;
+                                }
+
+                                :hover {
+                                color: #fff;
+                                background-color: #0069d9;
+                                border-color: #0062cc;
+                            }">Marquer comme terminée
+                                </button>
                             </form>
                             {% else %}
                             <form method="post"
                                   action="{% url 'mark_task_as_incompleted' project_id=project.pk task_id=task.id %}">
                                 {% csrf_token %}
-                                <button type="submit" class="btn-secondary">Marquer comme non terminée</button>
+                                <button type="submit" style="
+                                display: inline-block;
+                                font-weight: 400;
+                                color: #fff;
+                                text-align: center;
+                                vertical-align: middle;
+                                -webkit-user-select: none;
+                                -moz-user-select: none;
+                                -ms-user-select: none;
+                                user-select: none;
+                                background-color: #007bff;
+                                border: 1px solid #007bff;
+                                padding: 0.375rem 0.75rem;
+                                font-size: 1rem;
+                                line-height: 1.5;
+                                border-radius: 0.25rem;
+                                transition: all 0.15s ease-in-out;
+                                cursor: pointer;
+                                }
+
+                                :hover {
+                                color: #fff;
+                                background-color: #0069d9;
+                                border-color: #0062cc;
+                            }">Marquer comme non terminée
+                                </button>
                             </form>
                             {% endif %}
                         </li>
@@ -350,7 +408,34 @@
                             {{ task.name }}
                             <form method="post" action="{% url 'mark_task_as_incompleted' pk=task.id %}">
                                 {% csrf_token %}
-                                <button type="submit">Marquer comme non terminée</button>
+                                <button style="
+                                display: inline-block;
+                                font-weight: 400;
+                                color: #fff;
+                                text-align: center;
+                                vertical-align: middle;
+                                -webkit-user-select: none;
+                                -moz-user-select: none;
+                                -ms-user-select: none;
+                                user-select: none;
+                                background-color: #007bff;
+                                border: 1px solid #007bff;
+                                padding: 0.375rem 0.75rem;
+                                font-size: 1rem;
+                                line-height: 1.5;
+                                border-radius: 0.25rem;
+                                transition: all 0.15s ease-in-out;
+                                cursor: pointer;
+                                }
+
+                                :hover {
+                                color: #fff;
+                                background-color: #0069d9;
+                                border-color: #0062cc;
+                            }
+                            " type="submit">
+                                    Marquer comme non terminée
+                                </button>
                             </form>
                         </li>
                         {% endfor %}

@@ -52,6 +52,7 @@ class Task(models.Model):
     comments = models.TextField(blank=True)
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_tasks')
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='updated_tasks')
     type = models.CharField(max_length=200, default='Tâche')
     avancement = models.IntegerField(default=0)
     temps_estime = models.IntegerField(default=0)
@@ -66,8 +67,10 @@ class Task(models.Model):
     avancement_reel = models.IntegerField(null=True, blank=True)
     date_debut_reelle = models.DateTimeField(null=True, blank=True)
     date_debut_prevue = models.DateTimeField(null=True, blank=True)
-    date_fin_prevue = models.DateTimeField(null=True, blank=True)
     temps_estime_prevu = models.IntegerField(null=True, blank=True)
+    date_fin_prevue = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    priority = models.IntegerField(default=0)
     temps_restant_prevu = models.IntegerField(null=True, blank=True)
     temps_passe_prevu = models.IntegerField(null=True, blank=True)
     temps_aujourdhui = models.IntegerField(null=True, blank=True)
@@ -81,12 +84,47 @@ class Task(models.Model):
             if time_left.days > 0:
                 return f'{time_left.days} jours restant'
             else:
-                "Aujourd'hui est la date limite"
+                return "Aujourd'hui est la date limite"
         else:
             return 'Pas de date limite'
 
     def get_absolute_url(self):
         return reverse('task_detail', kwargs={'project_id': self.project.pk, 'task_id': self.pk})
+
+    def save(self, *args, **kwargs):
+        def save(self, *args, **kwargs):
+            if self.pk:
+                old_task = Task.objects.get(pk=self.pk)
+                if old_task.temps_passe_reel is not None:
+                    self.temps_passe_reel = old_task.temps_passe_reel + (self.temps_passe - old_task.temps_passe)
+                else:
+                    self.temps_passe_reel = self.temps_passe - old_task.temps_passe
+                if old_task.end_date != self.end_date or old_task.temps_passe != self.temps_passe:
+                    if old_task.temps_passe_reel is not None:
+                        self.temps_passe_reel = old_task.temps_passe_reel + (self.temps_passe - old_task.temps_passe)
+                    else:
+                        self.temps_passe_reel = self.temps_passe - old_task.temps_passe
+                    self.temps_restant_reel = old_task.temps_estime_reel - self.temps_passe_reel
+                    if self.temps_estime_reel > 0:
+                        self.avancement_reel = round(self.temps_passe_reel / self.temps_estime_reel * 100)
+                    else:
+                        self.avancement_reel = 0
+                    if self.temps_passe_reel is not None:
+                        self.date_fin_reelle = self.date_debut_reelle + datetime.timedelta(days=self.temps_passe_reel)
+                    else:
+                        self.date_fin_reelle = None
+                else:
+                    self.temps_passe_reel = None
+                    self.temps_restant_reel = None
+                    self.avancement_reel = None
+                    self.date_fin_reelle = None
+            else:
+                self.date_debut_reelle = timezone.now()
+                self.date_debut_prevue = timezone.now()
+                self.temps_estime_prevu = self.temps_estime
+                self.temps_restant_prevu = self.temps_estime
+
+        super().save(*args, **kwargs)
 
 
 class Event(models.Model):

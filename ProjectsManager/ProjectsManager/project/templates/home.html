@@ -121,11 +121,19 @@
 
 </style>
 
-<div class="container">
-    <h1 class="text-center mt-5">Liste des projets</h1>
+<div class="container" style="display: flex;flex-direction: column;">
+    <h1 class="text-center mt-5"
+        style="
+                text-align: center;
+                border-bottom: 1px solid #0071C5;
+                display: inline-block;
+                transition: transform 0.2s ease-in-out;
+                ::hover {
+                    transform: rotate(5deg);
+                }">Liste des projets</h1>
     <div class="row">
         {% for project in projects %}
-        <div class="col-md-4">
+        <div class="col-md-4" style="padding: 1.5vw">
             <div class="card mb-4">
                 <div class="card-header">{{ project.name }}</div>
                 <div class="card-body">
@@ -137,19 +145,30 @@
         {% endfor %}
     </div>
     {% if tasks %}
-    <h2>Tâches à faire aujourd'hui :</h2>
-    <div class="list-group">
+    <h2 style="text-align: center;
+                border-bottom: 1px solid #0071C5;
+                display: inline-block;
+                transition: transform 0.2s ease-in-out;
+                ::hover {
+                    transform: rotate(5deg);
+                }
+            ">Tâches à faire :</h2>
+    <div class="list-group" style="padding: 1.5vw">
         {% for task in tasks %}
         <!--a href="{% url 'task_update' task.pk %}">{{ task.name }}</a-->
-        <a href="{% url 'task_update' task.pk %}" class="list-group-item list-group-item-action no-decoration">
+        <a href="{% url 'task_update' task.pk %}" class="list-group-item list-group-item-action no-decoration"
+           style="text-decoration: none;
+                   ">
             <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ task.name }}</h5>
+                <h5 class="mb-1" style="text-align: center; ">{{ task.name }}</h5>
                 <small>{{ task.end_date }}</small>
             </div>
             <p class="mb-1"> Description {{ task.description }}</p>
-            <small>Projet :{{ task.project.name }}</small>
+            <p class="mb-1"> Priorité {{ task.priority }}</p>
+            <p class="mb-1"> Modifié par {{ task.modified_by }}</p>
+            <a href="{% url 'project_detail' pk=task.project.pk %}" style="text-align: center;"><small>Projet :{{ task.project.name }}</small></a>
         </a>
-        <hr>
+        <hr style="color: #0071C5">
         {% endfor %}
     </div>
     {% endif %}

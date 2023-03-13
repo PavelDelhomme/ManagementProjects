@@ -53,10 +53,14 @@
             {{ form.end_date }}
         </div> <!-- champ "date de fin" -->
 
-        <div class="form-group"> <!-- champ "priorité" -->
-            <label for="{{ form.priority.id_for_label }}">Priorité :</label>
-            {{ form.priority }}
-        </div> <!-- champ "priorité" -->
+        <div class="form-group">
+            <label class="small mb-1" for="{{ form.priority.id_for_label }}">Priorité</label>
+            <select class="form-control" id="{{ form.priority.id_for_label }}" name="{{ form.priority.name }}">
+                {% for value, label in form.priority.field.choices %}
+                <option value="{{ value }}" {% if form.priority.value== value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
         <div class="form-group"> <!-- champ "type" -->
             <label for="{{ form.type.id_for_label }}">Type :</label>
@@ -75,34 +79,31 @@
         <div class="form-group">
             <label for="{{ form.temps_passe.id_for_label }}">Temps passé :</label>
         </div>
-
+        % if form.instance.end_date %}
         <div class="form-group">
             <label for="{{ form.temps_restant.id_for_label }}">Temps restant :</label>
+            {% if form.instance.end_date > timezone.now().date %}
+            {{ form.instance.end_date|date:"d/m/Y" }} ({{ form.instance.end_date|timesince:timezone.now()|split:",")[0]
+            }} restant)
+            {% else %}
+            Terminé
+            {% endif %}
         </div>
-
+        {% endif %}
         <div class="form-group">
             <label for="{{ form.statut.id_for_label }}">Statut :</label>
             {{ form.statut }}
         </div>
-
+        {% if form.instance.updated_at %}
         <div class="form-group">
-            <label for="{{ form.date_modification.id_for_label }}">Date de modification :</label>
-            {{ form.date_modification }}
+            <label for="{{ form.updated_at.id_for_label }}">Dernière modification :</label>
+            {{ form.instance.updated_at|date:"d/m/Y à H:i" }} par {{ request.user.username }}
         </div>
+        {% endif %}
 
         <div class="form-group">
             <label for="{{ form.date_fin_reelle.id_for_label }}">Date de fin réelle :</label>
             {{ form.date_fin_reelle }}
-        </div>
-
-        <div class="form-group">
-            <label for="{{ form.temps_reel.id_for_label }}">Temps réel :</label>
-            {{ form.temps_reel }}
-        </div>
-
-        <div class="form-group">
-            <label for="{{ form.temps_restant_reel.id_for_label }}">Temps restant réel :</label>
-            {{ form.temps_restant_reel }}
         </div>
 
         <div class="form-group">
