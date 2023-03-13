@@ -35,7 +35,7 @@
     var calendar = new FullCalendar.Calendar(calendarEl, { // Crée une instance de FullCalendar
         initialView: 'dayGridMonth', // Affiche le calendrier en mode mois
         events: '{% url "event_api" %}', // Récupère les événements depuis l'API
-        url = "{% url 'task_api' %}";
+        url = "{% url 'event_api' %}";
         eventDidMount: function (info) {
             var tooltip = new Tooltip(info.el, {
                 title: info.event.extendedProps.description,
@@ -49,7 +49,7 @@
         events
     :
     '{% url "event_api" %}', // Récupère les événements depuis l'API
-        url = "{% url 'task_api' %}";
+        url = "{% url 'event_api' %}";
     eventDidMount: function f(info) {
         var tooltip = new Tooltip(info.el, {
             title: info.event.extendedProps.description,

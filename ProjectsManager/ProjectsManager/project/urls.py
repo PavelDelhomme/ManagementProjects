@@ -42,7 +42,7 @@ urlpatterns = [
 
     # Calendar URLs
     path('calendar/', calendar, name='calendar'),
-    path('event_api', event_api, name='event_api'),
+    path('tasklistapi/', event_api, name='event_api'),
     # autres URLs
     path('signup/', SignUpView.as_view(), name='signup'),
     path('profile/', profile, name='profile'),
