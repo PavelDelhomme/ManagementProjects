@@ -78,6 +78,7 @@ WSGI_APPLICATION = 'ProjectsManager.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+
 DATABASES = {
     'default': { # nom de la base de données
         'ENGINE': 'django.db.backends.sqlite3', # sqlite3 est un moteur de base de données

@@ -82,7 +82,6 @@ class Task(models.Model):
     temps_estime_prevu = models.IntegerField(null=True, blank=True) # Temps estimé prévu pour la tâche (optionnel)
     date_fin_prevue = models.DateTimeField(null=True, blank=True) # Date de fin prévue de la tâche (optionnel)
     updated_at = models.DateTimeField(auto_now=True) # Date de dernière modification de la tâche (obligatoire)
-    priority = models.IntegerField(default=0) # Priorité de la tâche (obligatoire)
     temps_restant_prevu = models.IntegerField(null=True, blank=True) # Temps restant prévu pour la tâche (optionnel)
     temps_passe_prevu = models.IntegerField(null=True, blank=True) # Temps passé prévu sur la tâche (optionnel)
     temps_aujourdhui = models.IntegerField(null=True, blank=True) # Temps passé aujourd'hui sur la tâche (optionnel)
