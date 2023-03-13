@@ -5,6 +5,41 @@
     .card.mb-4.shadow-sm {
         box-shadow: 0px 0px 20px rgba(0, 180, 255, 0.5);
     }
+    .card-deck {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+@media (min-width: 576px) {
+  .card-deck {
+    -ms-flex-flow: row wrap;
+    flex-flow: row wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+  }
+  .card-deck .card {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex: 1 0 0%;
+    flex: 1 0 0%;
+    margin-right: 15px;
+    margin-bottom: 0;
+    margin-left: 15px;
+  }
+}
+.card {
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
+}
 
     .car-header h4 {
         color: #007bff;
@@ -38,7 +73,7 @@
     }
 
     .rounded-pill {
-        border-radius: 50rem;
+        border-radius: 50rem!important;
     }
 
 
@@ -69,7 +104,7 @@
                     <li>Date de début: {{ project.start_date|date:"d-m-Y" }}</li> <!-- date de début -->
                     <li>Date de fin: {{ project.end_date|date:"d-m-Y" }}</li> <!-- date de fin -->
                 </ul>
-                <a href="{% url 'project_detail' project.pk %}" class="btn btn-primary rounded-pill">Détails</a>
+                <a href="{% url 'project_detail' project.pk %}" class="rounded-pill"><div class="btn btn-primary">Détails</div></a>
                 <!-- bouton pour voir les détails du projet -->
             </div>
         </div>

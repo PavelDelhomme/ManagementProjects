@@ -35,6 +35,8 @@ class Project(models.Model):
     def can_be_deleted_by(self, user):
         return user.is_superuser or self.created_by == user or user in self.assigned_to.all()
 
+    def __str__(self):
+        return self.name
 
 class Task(models.Model):
     name = models.CharField(max_length=200)

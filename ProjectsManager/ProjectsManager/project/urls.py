@@ -6,9 +6,9 @@ from .views import (
     SignUpView,
     profile,
     event_api,
-    all_notifications,
     MarkTaskAsCompletedView, MarkTaskAsIncompleteView,
-    ProjectSearchView
+    ProjectSearchView,
+    page_not_found
 )
 
 urlpatterns = [
@@ -18,8 +18,10 @@ urlpatterns = [
     path('tasks/<int:project_id>/<int:task_id>/', TaskDetailView.as_view(), name='task_detail'),
     path('tasks/create/<int:project_id>/', TaskCreateView.as_view(), name='task_create'),
     path('tasks/<int:pk>/add-comment/', add_task_comment, name='task_add_comment'),
-    path('tasks/<int:project_id>/completed/<int:task_id>/', MarkTaskAsCompletedView.as_view(), name='mark_task_as_completed'),
-    path('tasks/<int:project_id>/incompleted/mark_task_as_incompleted/<int:task_id>/', MarkTaskAsIncompleteView.as_view(), name='mark_task_as_incompleted'),
+    path('tasks/<int:project_id>/completed/<int:task_id>/', MarkTaskAsCompletedView.as_view(),
+         name='mark_task_as_completed'),
+    path('tasks/<int:project_id>/incompleted/mark_task_as_incompleted/<int:task_id>/',
+         MarkTaskAsIncompleteView.as_view(), name='mark_task_as_incompleted'),
     # path('tasks/<int:pk>/uncomplete/', uncomplete_task, name='task_uncomplete'),
     path('tasks/by-status/', TaskListView.as_view(), name='task_list_by_status'),
     path('tasks/by-priority/', TaskListView.as_view(), name='task_list_by_priority'),
@@ -43,6 +45,8 @@ urlpatterns = [
     path('event_api', event_api, name='event_api'),
     # autres URLs
     path('signup/', SignUpView.as_view(), name='signup'),
-    path('notifications/', all_notifications, name='all_notifications'),
     path('profile/', profile, name='profile'),
+
 ]
+
+handler404 = 'project.views.page_not_found'

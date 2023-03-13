@@ -41,8 +41,21 @@
     .card { /* style pour la card */
         background-color: #ddd; /* couleur de fond */
         padding: 20px; /* padding */
-        margin-bottom: 20px; /* marge extérieure */
     }
+
+    .card {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        border: 1px solid rgba(0, 0, 0, .125);
+        border-radius: .25rem;
+        margin: auto;
+    }
+
 
     .card-project { /* style pour la card-project */
         background-color: #7cb342; /* couleur de fond */
@@ -293,6 +306,14 @@
         text-align: center;
     }
 
+    .centered {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+
 </style>
 <body>
 {% if user.is_authenticated %} <!-- Si l'utilisateur est authentifié -->
@@ -311,9 +332,6 @@
                 <i class="fa fa-calendar-alt">Calendrier</i>
             </a>
         </li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'all_notifications' %}">Notifications ({{
-            <!-- Lien vers la page de notifications -->
-            request.user.notifications.unread.count }})</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Déconnexion</a></li>
         <!-- Lien vers la page de déconnexion -->
         <li class="nav-item"><a class="nav-link username" href="{% url 'profile' %}">{{ user.username }}</a></li>

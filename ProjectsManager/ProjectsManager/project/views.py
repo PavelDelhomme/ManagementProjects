@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic.edit import DeleteView, FormMixin
 from django.views.generic import CreateView, UpdateView, DetailView, RedirectView
@@ -26,6 +27,10 @@ from .models import time_remaining
 User = get_user_model()
 
 
+def page_not_found(request, exception):
+    return render(request, '404.html', status=404)
+
+
 class HomePageView(TemplateView):
     template_name = 'home.html'  # Le template qui va etre affiche dans la page home
 
@@ -42,11 +47,13 @@ class HomePageView(TemplateView):
 class ProjectListView(ListView):
     model = Project
     template_name = 'project/project_list.html'
+    context_object_name = 'projects'
     ordering = ['-start_date']
 
     def get_queryset(self):
-        return Project.objects.filter(
+        projects = Project.objects.filter(
             assigned_to=self.request.user)
+        return projects
 
 
 class ProjectCreateView(CreateView):
@@ -54,12 +61,12 @@ class ProjectCreateView(CreateView):
     template_name = 'project/project_create.html'
     fields = ['name', 'description', 'assigned_to', 'start_date',
               'end_date']
-    success_url = reverse_lazy(
-        'project_list_by_start_date')
+    success_url = reverse_lazy('project_list_by_start_date')
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        return response
 
     def get_success_url(self):
         return reverse_lazy('project_detail', kwargs={'pk': self.object.pk})
@@ -116,7 +123,7 @@ class TaskCreateView(CreateView):
         return response
 
     def get_success_url(self):
-        return reverse_lazy('project_detail', kwargs={'pk': self.object.project_id})
+        return reverse_lazy('project_detail', kwargs={'pk': self.kwargs['project_id']})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -293,11 +300,6 @@ class SignUpView(CreateView):
 
 
 @login_required
-def all_notifications(request):
-    return render(request, 'all_notifications.html')
-
-
-@login_required
 def add_task_comment(request, pk):
     task = get_object_or_404(Task, pk=pk)
     if request.method == 'POST':
@@ -382,3 +384,24 @@ class ProjectSearchView(ListView):
         else:
             queryset = Project.objects.all()
         return queryset
+
+
+# Implémentation du calendrier
+@method_decorator(login_required, name='dispatch')
+class TaskListAPIView(View):
+    def get(self, request):
+        tasks = Task.objects.all()
+        serializer = TaskSerializer(tasks, many=True)
+        events = []
+        for task in tasks:
+            event = {
+                'id': task.id,
+                'title': task.title,
+                'start': task.start_date.isoformat(),
+                'end': task.end_date.isoformat(),
+                'description': task.description,
+                'backgroundColor': 'red' if task.status == 'incomplete' else 'green',
+                # 'url': '/task_detail/' + str(task.id),
+            }
+            events.append(event)
+        return JsonResponse(events, safe=False)

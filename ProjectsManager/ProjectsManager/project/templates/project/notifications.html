@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Notifications</h1>
+  {% if projects_with_past_due_dates %}
+    <h2>Projets avec une date d'échéance passée</h2>
+    <ul>
+      {% for project in projects_with_past_due_dates %}
+        <li>{{ project.name }} ({{ project.end_date }})</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Aucune notification pour le moment.</p>
+  {% endif %}
+{% endblock %}

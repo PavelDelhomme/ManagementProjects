@@ -12,9 +12,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -25,8 +25,7 @@ SECRET_KEY = 'django-insecure-joex$zwy(_%4i#zd6mg5fnz)ow!l%&_4=ec^av65pn*av*5)kl
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['127.0.0.1']
 
 # Application definition
 
@@ -41,7 +40,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'django_extensions',
     # 'admin_list_filter_dropdown',
-    #'django-admin-list-filter-dropdown',
+    # 'django-admin-list-filter-dropdown',
 
 ]
 
@@ -76,7 +75,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ProjectsManager.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -86,7 +84,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -106,7 +103,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -118,7 +114,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
@@ -129,10 +124,12 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-#CELERY_BEAT_SCHEDULE = {
+# CELERY_BEAT_SCHEDULE = {
 #    'send_task_notification': {
 #        'task': 'project.tasks.send_task_notification',
 #        'schedule': crontab(minute=0, hour=*),
 #    },
-#}
+# }
+
+# Ajouter la ligne suivante à la fin du fichier settings.py
+handler404 = 'project.views.error_404_view'
