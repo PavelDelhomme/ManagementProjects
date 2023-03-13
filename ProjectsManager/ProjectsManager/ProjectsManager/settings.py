@@ -55,13 +55,13 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
 ]
 
-ROOT_URLCONF = 'ProjectsManager.urls'
+ROOT_URLCONF = 'ProjectsManager.urls' # URLS de l'application principale (celle qui contient le fichier urls.py)
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        'APP_DIRS': True,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')], # permet de charger les templates de l'application principale
+        'APP_DIRS': True, # permet de charger les templates des applications
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -79,9 +79,9 @@ WSGI_APPLICATION = 'ProjectsManager.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'default': { # nom de la base de données
+        'ENGINE': 'django.db.backends.sqlite3', # sqlite3 est un moteur de base de données
+        'NAME': BASE_DIR / 'db.sqlite3', # chemin vers la base de données
     }
 }
 
@@ -131,5 +131,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #    },
 # }
 
-# Ajouter la ligne suivante à la fin du fichier settings.py
-handler404 = 'project.views.error_404_view'
+handler404 = 'project.views.error_404_view' # permet de rediriger vers une page 404 personnalisée

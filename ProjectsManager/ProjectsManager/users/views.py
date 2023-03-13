@@ -49,4 +49,10 @@ class SignUpView(CreateView):
 
 @login_required
 def profile(request):
+    """
+    Vue de profil d'un utilisateur. Cette vue est accessible uniquement si l'utilisateur est connecté.
+
+    :param request:
+    :return:
+    """
     return render(request, 'profile.html')

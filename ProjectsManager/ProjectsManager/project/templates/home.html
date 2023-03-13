@@ -122,6 +122,7 @@
 </style>
 
 <div class="container" style="display: flex;flex-direction: column;">
+    {% if user.is_authenticated %}
     <h1 class="text-center mt-5"
         style="
                 text-align: center;
@@ -171,6 +172,8 @@
         <hr style="color: #0071C5">
         {% endfor %}
     </div>
+    {% endif %}
+    {% else %}
     {% endif %}
 </div>
 {% endblock %}
