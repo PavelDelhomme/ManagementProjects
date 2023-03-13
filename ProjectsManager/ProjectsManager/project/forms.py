@@ -89,14 +89,14 @@ def __init__(self, *args, **kwargs):
 
 
 class TaskForm(forms.ModelForm):
-    PRIORITY_CHOICES = [(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')]
+    PRIORITY_CHOICES = [(1, 'Faible'), (2, 'Moyenne'), (3, 'Haute'), (4, 'Urgente'), (5, 'Critique')]
     STATUS_CHOICES = [(1, 'A faire'), (2, 'En cours'), (3, 'Terminée')]
 
     name = forms.CharField(max_length=255, label='Nom de la tâche')
     description = forms.CharField(widget=forms.Textarea, label='Description')
     assigned_to = forms.ModelChoiceField(queryset=User.objects.all(), label='Assignée à')
-    start_date = forms.DateField(widget=forms.TextInput(attrs={'type': 'date'}), label='Date de début')
-    end_date = forms.DateField(widget=forms.TextInput(attrs={'type': 'date'}), label='Date de fin')
+    start_date = forms.DateField(widget=forms.DateField(widget=forms.SelectDateWidget(), label='Date de début'))
+    end_date = forms.DateField(widget=forms.DateField(widget=forms.SelectDateWidget(), label='Date de fin'))
     priority = forms.ChoiceField(choices=PRIORITY_CHOICES, label='Priorité')
     status = forms.ChoiceField(choices=STATUS_CHOICES, label='Statut')
     comments = forms.CharField(widget=forms.Textarea, required=False, label='Commentaires')
@@ -118,6 +118,9 @@ class TaskForm(forms.ModelForm):
         self.fields['date_debut_prevue'].initial = datetime.now()
         self.fields['date_fin_prevue'].widget = SelectDateWidget()
         self.fields['date_fin_prevue'].initial = datetime.now()
+
+    def label_from_instance(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
 
 # Class TaskForm
 

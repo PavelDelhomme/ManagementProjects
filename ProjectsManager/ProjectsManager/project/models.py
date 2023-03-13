@@ -40,6 +40,13 @@ class Project(models.Model):
 
 
 class Task(models.Model):
+    PRIORITY_CHOICES = (
+        (1, _('Faible')),
+        (2, _('Moyenne')),
+        (3, _('Haute')),
+        (4, _('Urgente')),
+        (5, _('Critique')),
+    )
     name = models.CharField(max_length=200)
     description = models.TextField()
     assigned_to = models.ManyToManyField(User, related_name='assigned_tasks')
@@ -47,7 +54,7 @@ class Task(models.Model):
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     due_date = models.DateField(null=True, blank=True)
-    priority = models.IntegerField(default=1)
+    priority = models.IntegerField(max_length=len(PRIORITY_CHOICES), choices=PRIORITY_CHOICES, default=1)
     status = models.CharField(max_length=20, choices=[('incomplete', 'Incomplète'), ('complete', 'Complète')], )
     comments = models.TextField(blank=True)
 

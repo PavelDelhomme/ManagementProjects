@@ -265,11 +265,13 @@ class MarkTaskAsIncompleteView(LoginRequiredMixin, RedirectView):
 class TaskDeleteView(DeleteView):
     model = Task
     template_name = 'project/task_confirm_delete.html'
-    success_url = reverse_lazy('task_list')
+    context_object_name = 'task'
+    #success_url = reverse_lazy('task_list')
 
     def get_success_url(self):
         messages.success(self.request, f"Task {self.object.name} has been deleted successfully")
-        return reverse_lazy('task_list', kwargs={'project_id': self.object.project.pk})
+        project_id = self.object.project.id
+        return reverse_lazy('task_list', kwargs={'project_id': project_id})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
